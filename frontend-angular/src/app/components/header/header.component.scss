@@ -1,0 +1,29 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #e9aebc, #c2c1df);
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    color: white;
+  }
+
+  .subtext {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: white;
+    opacity: 0.9;
+  }
+}
+
+.abb-logo {
+  height: 50px;
+  object-fit: contain;
+}

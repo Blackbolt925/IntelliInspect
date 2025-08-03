@@ -1,0 +1,32 @@
+.separator {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+  margin: 0;
+}
+
+.footer-gradient {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: linear-gradient(to right, #ff0000, #6e00ff);
+  height: 50px;
+  padding: 0 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: right;
+  font-family: sans-serif;
+}
+
+.footer-text {
+  line-height: 1.2;
+}
+
+.footer-label {
+  text-align: center;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+  font-family: sans-serif;
+}
