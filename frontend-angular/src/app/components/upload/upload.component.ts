@@ -19,13 +19,14 @@ export class UploadComponent {
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
-    if (file && file.type === 'text/csv') {
+    if (file && file.size > environment.MAX_FILE_SIZE) {
+      this.error = `File Size exceeded Max limit ${environment.MAX_FILE_SIZE}`;
+    }
+    else if (file && file.type === 'text/csv') {
       this.selectedFile = file;
       this.fileName = file.name;
       this.error = '';
-    }
-    else if (file.size > environment.MAX_FILE_SIZE) {
-      this.error = `File Size exceeded Max limit ${environment.MAX_FILE_SIZE}`;
+      this.uploadFile();
     }
     else {
       this.error = 'Please upload a valid CSV file.';
@@ -35,11 +36,16 @@ export class UploadComponent {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     const file = event.dataTransfer?.files[0];
-    if (file && file.type === 'text/csv') {
+    if (file && file.size > environment.MAX_FILE_SIZE) {
+      this.error = `File Size exceeded Max limit ${environment.MAX_FILE_SIZE}`;
+    }
+    else if (file && file.type === 'text/csv') {
       this.selectedFile = file;
       this.fileName = file.name;
       this.error = '';
-    } else {
+      this.uploadFile();
+    }
+    else {
       this.error = 'Please upload a valid CSV file.';
     }
   }

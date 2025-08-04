@@ -25,7 +25,7 @@ import { ProgressNavbarComponent } from './components/progress-navbar/progress-n
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { CurrentTabComponent } from './components/current-tab/current-tab.component';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -56,7 +56,8 @@ import { CurrentTabComponent } from './components/current-tab/current-tab.compon
     MatProgressSpinnerModule,
     MatSnackBarModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    CommonModule
   ],
   providers: [
     provideClientHydration(),
