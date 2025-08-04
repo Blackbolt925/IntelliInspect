@@ -11,53 +11,66 @@ using System.Linq;
 public class UploadController : ControllerBase
 {
     [HttpPost]
+    [RequestSizeLimit(2147483648)] // 2GB
     public async Task<IActionResult> UploadCsv(IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("CSV file is required.");
 
-        var rows = new List<Dictionary<string, string>>();
+        int totalRows = 0;
+        int totalCols = 0;
+        int responseCount = 0;
+        List<string> columnNames = new List<string>();
+        DateTime startTimestamp = new DateTime(2021, 1, 1, 0, 0, 0);
+        DateTime endTimestamp = startTimestamp;
+
         try
         {
-            using var reader = new StreamReader(file.OpenReadStream());
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<dynamic>();
+            using var stream = file.OpenReadStream();
+            using var reader = new StreamReader(stream);
+            string? headerLine = await reader.ReadLineAsync();
+            if (string.IsNullOrWhiteSpace(headerLine))
+                return BadRequest("CSV contains no header row.");
 
-            foreach (var record in records)
+            columnNames = headerLine.Split(',').Select(h => h.Trim()).ToList();
+            totalCols = columnNames.Count;
+
+            string? line;
+            int i = 0;
+            while ((line = await reader.ReadLineAsync()) != null)
             {
-                var dict = ((IDictionary<string, object>)record)
-                    .ToDictionary(k => k.Key, k => k.Value?.ToString() ?? "");
-                rows.Add(dict);
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+                var values = line.Split(',');
+                if (values.Length != totalCols)
+                    continue; // skip malformed rows
+
+                // Build dictionary for row if needed
+                var rowDict = new Dictionary<string, string>();
+                for (int c = 0; c < totalCols; c++)
+                {
+                    rowDict[columnNames[c]] = values[c];
+                }
+
+                // Augment with timestamp (not returned, but for parity)
+                // rowDict["Timestamp"] = startTimestamp.AddSeconds(i).ToString("yyyy-MM-dd HH:mm:ss");
+
+                // Count Response == 1
+                if (rowDict.ContainsKey("Response") && rowDict["Response"] == "1")
+                    responseCount++;
+
+                i++;
             }
+            totalRows = i;
+            endTimestamp = startTimestamp.AddSeconds(totalRows - 1);
         }
         catch (Exception ex)
         {
             return BadRequest($"Error parsing CSV: {ex.Message}");
         }
 
-        if (rows.Count == 0)
+        if (totalRows == 0)
             return BadRequest("CSV contains no rows.");
-
-        var columnNames = rows[0].Keys.ToList();
-        int totalRows = rows.Count;
-        int totalCols = columnNames.Count;
-
-        int responseCount = 0;
-
-        DateTime startTimestamp = new DateTime(2021, 1, 1, 0, 0, 0);
-        DateTime endTimestamp = startTimestamp.AddSeconds(totalRows - 1);
-
-        for (int i = 0; i < totalRows; i++)
-        {
-            var row = rows[i];
-
-            // Augment with timestamp
-            row["Timestamp"] = startTimestamp.AddSeconds(i).ToString("yyyy-MM-dd HH:mm:ss");
-
-            // Count Response == 1
-            if (row.ContainsKey("Response") && row["Response"] == "1")
-                responseCount++;
-        }
 
         double percentResponseOne = (double)responseCount / totalRows * 100.0;
 

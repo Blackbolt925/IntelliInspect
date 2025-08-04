@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,14 @@ builder.Services.AddHttpClient("MLService", client =>
     client.BaseAddress = new Uri("http://localhost:8000/"); // ML service URL
 });
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 14L * 1024 * 1024 * 1024; // 14 GB, adjust as needed
+});
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 14L * 1024 * 1024 * 1024; // 14 GB
+});
 var app = builder.Build();
 
 // Configure pipeline
