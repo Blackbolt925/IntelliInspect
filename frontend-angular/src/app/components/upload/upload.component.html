@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 <app-progress-navbar [currentStep]="3"></app-progress-navbar>
-=======
-<app-current-tab></app-current-tab>
+
 <h2>Upload Dataset</h2>
 
 <div class="upload-area"
@@ -19,15 +17,14 @@
 </div>
 
 <div *ngIf="metadata" class="meta-summary">
-  <mat-card class="card">Records <br /><strong>{{ metadata.totalRecords }}</strong></mat-card>
-  <mat-card class="card">Columns <br /><strong>{{ metadata.totalColumns }}</strong></mat-card>
-  <mat-card class="card">Pass Rate <br /><strong>{{ metadata.passRate }}%</strong></mat-card>
+  <mat-card class="card">Records <br /><strong>{{ metadata.totalRows }}</strong></mat-card>
+  <mat-card class="card">Columns <br /><strong>{{ metadata.totalCols }}</strong></mat-card>
+  <mat-card class="card">Pass Rate <br /><strong>{{ metadata.percentResponseEqualsOne }}%</strong></mat-card>
   <mat-card class="card">Date Range <br />
-    <strong>{{ metadata.dateStart }}</strong> to <strong>{{ metadata.dateEnd }}</strong>
+    <strong>{{ metadata.startTimestamp }}</strong> to <strong>{{ metadata.endTimestamp }}</strong>
   </mat-card>
 </div>
 
 <div *ngIf="error" class="error">{{ error }}</div>
 
 <button mat-raised-button color="accent" class="next-btn" [disabled]="!metadata" (click)="proceed()">Next</button>
->>>>>>> a00852c (made changes)

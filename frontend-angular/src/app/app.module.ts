@@ -21,14 +21,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-<<<<<<< HEAD
 import { ProgressNavbarComponent } from './components/progress-navbar/progress-navbar.component';
-=======
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CurrentTabComponent } from './components/current-tab/current-tab.component';
->>>>>>> a00852c (made changes)
 
 
 
