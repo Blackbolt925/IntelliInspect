@@ -11,7 +11,6 @@ using System.Linq;
 public class UploadController : ControllerBase
 {
     [HttpPost]
-    [Route("upload")]
     public async Task<IActionResult> UploadCsv(IFormFile file)
     {
         if (file == null || file.Length == 0)
