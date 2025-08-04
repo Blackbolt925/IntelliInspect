@@ -1,1 +1,10 @@
-<p>stepper works!</p>
+<div class="stepper-container">
+  <div class="step-label">Step {{ activeStep }} of 4</div>
+
+  <div class="steps">
+    <div *ngFor="let step of steps" class="step" [class.active]="step.number === activeStep">
+      <div class="circle">{{ step.number }}</div>
+      <div class="label">{{ step.label }}</div>
+    </div>
+  </div>
+</div>

@@ -8,13 +8,14 @@ import { SimulationComponent } from './components/simulation/simulation.componen
 const routes: Routes = [
   { path: '', redirectTo: 'upload', pathMatch: 'full' },
   { path: 'upload', component: UploadComponent },
-  { path: 'ranges', component: DateRangesComponent },
-  { path: 'train', component: TrainModelComponent },
-  { path: 'simulate', component: SimulationComponent }
+  { path: 'date-ranges', component: DateRangesComponent },
+  { path: 'train-model', component: TrainModelComponent },
+  { path: 'simulation', component: SimulationComponent },
+  { path: '**', redirectTo: 'upload' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,0 +1,115 @@
+/* Overall container styling */
+:host {
+  display: block;
+  padding: 20px;
+  background: #f8fafc; /* light background */
+  border-radius: 12px;
+}
+
+/* Stepper style adjustments (if using Angular Material stepper) */
+::ng-deep .mat-horizontal-stepper-header-container {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Upload area */
+.upload-area {
+  border: 2px dashed #cbd5e1; /* light gray-blue border */
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease;
+
+  &:hover {
+    border-color: #4f46e5; /* indigo highlight */
+    background: #f0f4ff; /* light indigo tint */
+  }
+
+  p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+
+  button {
+    margin-top: 8px;
+  }
+}
+
+/* File preview area */
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ecfdf5; /* light green background */
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border: 1px solid #a7f3d0; /* light green border */
+
+  mat-icon {
+    color: #059669; /* green icon */
+  }
+
+  strong {
+    color: #2563eb; /* blue file name */
+  }
+
+  button {
+    margin-left: auto;
+  }
+}
+
+/* Metadata summary cards */
+.meta-summary {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+
+  .card {
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f0fdf4; /* very light green */
+    border: 1px solid #bbf7d0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    strong {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a; /* near black */
+    }
+  }
+}
+
+/* Error message */
+.error {
+  color: #dc2626; /* red */
+  margin-top: 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Next button styling */
+.next-btn {
+  margin-top: 25px;
+  float: right;
+  background-color: #4f46e5 !important; /* indigo */
+  color: white !important;
+  padding: 8px 20px;
+  border-radius: 8px;
+}
