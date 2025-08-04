@@ -1,0 +1,60 @@
+# Build results
+bin/
+obj/
+out/
+publish/
+*.user
+*.suo
+
+# Rider project files
+.idea/
+
+# Visual Studio
+.vs/
+*.csproj.user
+
+# Dotnet CLI artifacts
+*.pidb
+*.dbmdl
+
+# User-specific files
+*.swp
+*.user
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Logs
+*.log
+
+# Docker
+**/Dockerfile
+docker-compose.*
+.env
+*.container.log
+**/.dockerignore
+
+# Node (if you're using Angular in same repo)
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Others
+.env*
+.vscode/
+*.sqlite
+*.sqlite3
+
+# IDEs
+*.code-workspace
+.vscode/
+
+# Python (if you're running ML service side-by-side)
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
