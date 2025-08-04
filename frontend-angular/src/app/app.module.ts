@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +21,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { CurrentTabComponent } from './components/current-tab/current-tab.component';
 
 
 
@@ -32,9 +37,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     UploadComponent,
     DateRangesComponent,
     TrainModelComponent,
-    SimulationComponent
+    SimulationComponent,
+    CurrentTabComponent
   ],
   imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     HttpClientModule,
     MatToolbarModule,
     MatButtonModule,

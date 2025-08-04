@@ -1,1 +1,58 @@
-<p>simulation works!</p>
+<app-stepper [activeStep]="4"></app-stepper>
+
+<h2>Real-Time Prediction Simulation</h2>
+
+<div class="simulation-actions">
+  <button mat-raised-button color="primary" *ngIf="!isRunning && !isCompleted" (click)="startSimulation()">
+    Start Simulation
+  </button>
+  <button mat-stroked-button color="accent" *ngIf="isCompleted" (click)="restart()">
+    Restart Simulation
+  </button>
+</div>
+
+<p *ngIf="isCompleted" class="success-msg">✔ Simulation completed</p>
+
+<div class="charts">
+  <mat-card>
+    <h4>Quality Score Over Time</h4>
+    <p>[Line Chart Placeholder]</p>
+  </mat-card>
+
+  <mat-card>
+    <h4>Prediction Confidence</h4>
+    <p>[Donut Chart Placeholder]</p>
+  </mat-card>
+</div>
+
+<div class="stats-panel">
+  <mat-card>Total: {{ total }}</mat-card>
+  <mat-card>Pass: {{ passCount }}</mat-card>
+  <mat-card>Fail: {{ failCount }}</mat-card>
+  <mat-card>Avg Confidence: {{ avgConfidence | number:'1.0-2' }}%</mat-card>
+</div>
+
+<table *ngIf="records.length > 0">
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>ID</th>
+      <th>Prediction</th>
+      <th>Confidence</th>
+      <th>Temperature (°C)</th>
+      <th>Pressure (hPa)</th>
+      <th>Humidity (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let r of records">
+      <td>{{ r.time }}</td>
+      <td>{{ r.sampleId }}</td>
+      <td>{{ r.prediction }}</td>
+      <td>{{ r.confidence }}%</td>
+      <td>{{ r.temperature }}</td>
+      <td>{{ r.pressure }}</td>
+      <td>{{ r.humidity }}</td>
+    </tr>
+  </tbody>
+</table>

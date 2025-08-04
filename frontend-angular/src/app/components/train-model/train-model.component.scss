@@ -1,0 +1,44 @@
+.center-box {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.status {
+  margin-top: 10px;
+  font-weight: bold;
+  color: green;
+}
+
+.metrics-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 20px;
+
+  .metric {
+    padding: 1rem;
+    text-align: center;
+    min-width: 150px;
+  }
+}
+
+.charts-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 30px;
+  justify-content: space-evenly;
+
+  .chart {
+    flex: 1;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-radius: 8px;
+    text-align: center;
+  }
+}
+
+.next-action {
+  margin-top: 30px;
+  text-align: center;
+}

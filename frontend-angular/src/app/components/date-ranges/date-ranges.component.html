@@ -1,1 +1,56 @@
-<p>date-ranges works!</p>
+<app-stepper [activeStep]="2"></app-stepper>
+
+<h2>Date Range Selection</h2>
+
+<div class="range-group">
+  <mat-card>
+    <h4>Training Period</h4>
+    <mat-form-field>
+      <input matInput type="date" [(ngModel)]="trainStart" placeholder="Start Date">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="date" [(ngModel)]="trainEnd" placeholder="End Date">
+    </mat-form-field>
+  </mat-card>
+
+  <mat-card>
+    <h4>Testing Period</h4>
+    <mat-form-field>
+      <input matInput type="date" [(ngModel)]="testStart" placeholder="Start Date">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="date" [(ngModel)]="testEnd" placeholder="End Date">
+    </mat-form-field>
+  </mat-card>
+
+  <mat-card>
+    <h4>Simulation Period</h4>
+    <mat-form-field>
+      <input matInput type="date" [(ngModel)]="simStart" placeholder="Start Date">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="date" [(ngModel)]="simEnd" placeholder="End Date">
+    </mat-form-field>
+  </mat-card>
+</div>
+
+<div class="status" [class.success]="validationSuccess" [class.error]="!validationSuccess && validationMessage">
+  {{ validationMessage }}
+</div>
+
+<div *ngIf="recordCounts" class="summary-cards">
+  <mat-card>Training: {{ recordCounts.trainDays }} days<br><small>{{ recordCounts.trainStart }} → {{ recordCounts.trainEnd }}</small></mat-card>
+  <mat-card>Testing: {{ recordCounts.testDays }} days<br><small>{{ recordCounts.testStart }} → {{ recordCounts.testEnd }}</small></mat-card>
+  <mat-card>Simulation: {{ recordCounts.simDays }} days<br><small>{{ recordCounts.simStart }} → {{ recordCounts.simEnd }}</small></mat-card>
+</div>
+
+<!-- Dummy chart container -->
+<div *ngIf="barChartData.length > 0" class="bar-chart-placeholder">
+  <!-- You can replace this with Chart.js or ngx-charts -->
+  <p>[Chart placeholder: {{ barChartData.length }} bars]</p>
+</div>
+
+<div class="actions">
+  <button mat-stroked-button color="primary" (click)="validateRanges()">Validate Ranges</button>
+  <button mat-raised-button color="accent" [disabled]="!validationSuccess" (click)="next()">Next</button>
+</div>

@@ -1,0 +1,28 @@
+.step-tabs {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .step {
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #eee;
+    color: #555;
+    font-weight: 500;
+    flex: 1;
+    text-align: center;
+  }
+
+  .active {
+    background: #007bff;
+    color: white;
+    font-weight: 600;
+  }
+
+  .completed {
+    background: #28a745; // green
+    color: white;
+    font-weight: 600;
+  }
+}

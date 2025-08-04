@@ -1,1 +1,29 @@
-<p>upload works!</p>
+<app-current-tab></app-current-tab>
+<h2>Upload Dataset</h2>
+
+<div class="upload-area"
+     (drop)="onDrop($event)"
+     (dragover)="onDragOver($event)">
+  <p *ngIf="!selectedFile">Click to select a CSV file or drag and drop</p>
+  <input type="file" accept=".csv" (change)="onFileSelected($event)" hidden #fileInput />
+  <button mat-raised-button color="primary" (click)="fileInput.click()">Choose File</button>
+</div>
+
+<div *ngIf="selectedFile" class="file-preview">
+  <mat-icon>insert_drive_file</mat-icon>
+  <strong>{{ fileName }}</strong> ({{ selectedFile.size / 1024 | number:'1.0-1' }} KB)
+  <button mat-button color="accent" (click)="uploadFile()" [disabled]="isUploading">Upload</button>
+</div>
+
+<div *ngIf="metadata" class="meta-summary">
+  <mat-card class="card">Records <br /><strong>{{ metadata.totalRecords }}</strong></mat-card>
+  <mat-card class="card">Columns <br /><strong>{{ metadata.totalColumns }}</strong></mat-card>
+  <mat-card class="card">Pass Rate <br /><strong>{{ metadata.passRate }}%</strong></mat-card>
+  <mat-card class="card">Date Range <br />
+    <strong>{{ metadata.dateStart }}</strong> to <strong>{{ metadata.dateEnd }}</strong>
+  </mat-card>
+</div>
+
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<button mat-raised-button color="accent" class="next-btn" [disabled]="!metadata" (click)="proceed()">Next</button>
