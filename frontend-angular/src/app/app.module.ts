@@ -42,11 +42,7 @@ import { CurrentTabComponent } from './components/current-tab/current-tab.compon
     DateRangesComponent,
     TrainModelComponent,
     SimulationComponent,
-<<<<<<< HEAD
     ProgressNavbarComponent
-=======
-    CurrentTabComponent
->>>>>>> a00852c (made changes)
   ],
   imports: [
     FormsModule,
