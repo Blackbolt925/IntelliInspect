@@ -1,44 +1,103 @@
+:host {
+  display: block;
+  background-color: #f7fafe; // Light grey background from your screenshot
+  min-height: 100vh;
+}
+
+/* Outer White Box */
+.content-card {
+  background-color: #ffffff;
+  margin: 20px auto;
+  padding: 20px 30px 30px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+}
+
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-step {
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #1976d2; /* Blue */
+  color: #ffffff; /* White text */
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
 .center-box {
-  text-align: center;
-  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px 0;
+}
+
+/* Custom Blue Train Button */
+.train-button {
+  background-color: #1976d2; /* Blue - same as Step 3 of 4 */
+  color: #ffffff;            /* White text */
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 4px; /* Rectangle */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.train-button:hover {
+  background-color: #125ea6; /* Slightly darker blue on hover */
+}
+
+.train-button:disabled {
+  background-color: #a0a0a0; /* Grey when disabled */
+  cursor: not-allowed;
 }
 
 .status {
   margin-top: 10px;
-  font-weight: bold;
-  color: green;
+  font-weight: 500;
+  color: #555;
 }
 
 .metrics-cards {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
   justify-content: center;
-  margin-top: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 40px 0;
+}
 
-  .metric {
-    padding: 1rem;
-    text-align: center;
-    min-width: 150px;
-  }
+.metric {
+  padding: 20px;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .charts-container {
   display: flex;
-  gap: 2rem;
-  margin-top: 30px;
-  justify-content: space-evenly;
+  justify-content: space-around;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
 
-  .chart {
-    flex: 1;
-    padding: 1rem;
-    background: #f8f8f8;
-    border-radius: 8px;
-    text-align: center;
-  }
+.chart {
+  width: 45%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .next-action {
-  margin-top: 30px;
-  text-align: center;
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px 0;
 }
