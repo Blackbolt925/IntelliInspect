@@ -1,1 +1,33 @@
-<p>train-model works!</p>
+<app-stepper [activeStep]="3"></app-stepper>
+
+<h2>Model Training & Evaluation</h2>
+
+<div class="center-box">
+  <button mat-raised-button color="primary" (click)="trainModel()" [disabled]="training || trained">
+    Train Model
+  </button>
+  <p *ngIf="statusMsg" class="status">{{ statusMsg }}</p>
+</div>
+
+<div *ngIf="trained && metrics" class="metrics-cards">
+  <mat-card class="metric">Accuracy<br><strong>{{ metrics.accuracy }}%</strong></mat-card>
+  <mat-card class="metric">Precision<br><strong>{{ metrics.precision }}%</strong></mat-card>
+  <mat-card class="metric">Recall<br><strong>{{ metrics.recall }}%</strong></mat-card>
+  <mat-card class="metric">F1-Score<br><strong>{{ metrics.f1Score }}%</strong></mat-card>
+</div>
+
+<!-- Chart Placeholders -->
+<div class="charts-container" *ngIf="trained">
+  <div class="chart">
+    <h4>Training Metrics</h4>
+    <p>[Line Chart Placeholder]</p>
+  </div>
+  <div class="chart">
+    <h4>Model Performance</h4>
+    <p>[Donut Chart Placeholder]</p>
+  </div>
+</div>
+
+<div class="next-action">
+  <button mat-raised-button color="accent" (click)="next()">Next</button>
+</div>

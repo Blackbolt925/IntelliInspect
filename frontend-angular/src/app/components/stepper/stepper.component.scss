@@ -1,0 +1,42 @@
+.stepper-container {
+  margin-bottom: 1.5rem;
+}
+
+.step-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step {
+  text-align: center;
+  flex: 1;
+
+  .circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ccc;
+    margin: 0 auto 5px;
+    color: white;
+    font-weight: bold;
+    line-height: 30px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+
+  &.active .circle {
+    background: #007bff;
+  }
+
+  &.active .label {
+    font-weight: bold;
+  }
+}
