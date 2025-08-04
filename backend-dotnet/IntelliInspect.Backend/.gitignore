@@ -29,9 +29,6 @@ ScaffoldingReadMe.txt
 # Logs
 *.log
 
-# Docker
-**/Dockerfile
-docker-compose.*
 .env
 *.container.log
 **/.dockerignore
