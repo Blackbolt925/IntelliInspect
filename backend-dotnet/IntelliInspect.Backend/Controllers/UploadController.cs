@@ -43,22 +43,20 @@ public class UploadController : ControllerBase
         int totalCols = columnNames.Count;
 
         int responseCount = 0;
-        double minValue = double.MaxValue;
-        double maxValue = double.MinValue;
 
-        foreach (var row in rows)
+        DateTime startTimestamp = new DateTime(2021, 1, 1, 0, 0, 0);
+        DateTime endTimestamp = startTimestamp.AddSeconds(totalRows - 1);
+
+        for (int i = 0; i < totalRows; i++)
         {
+            var row = rows[i];
+
+            // Augment with timestamp
+            row["Timestamp"] = startTimestamp.AddSeconds(i).ToString("yyyy-MM-dd HH:mm:ss");
+
+            // Count Response == 1
             if (row.ContainsKey("Response") && row["Response"] == "1")
                 responseCount++;
-
-            foreach (var val in row.Values)
-            {
-                if (double.TryParse(val, NumberStyles.Any, CultureInfo.InvariantCulture, out double num))
-                {
-                    if (num < minValue) minValue = num;
-                    if (num > maxValue) maxValue = num;
-                }
-            }
         }
 
         double percentResponseOne = (double)responseCount / totalRows * 100.0;
@@ -68,8 +66,8 @@ public class UploadController : ControllerBase
             totalRows,
             totalCols,
             percentResponseEqualsOne = percentResponseOne,
-            minValue,
-            maxValue
+            startTimestamp = startTimestamp.ToString("yyyy-MM-dd HH:mm:ss"),
+            endTimestamp = endTimestamp.ToString("yyyy-MM-dd HH:mm:ss"),
         });
     }
 }
