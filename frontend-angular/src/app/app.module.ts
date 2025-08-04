@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ProgressNavbarComponent } from './components/progress-navbar/progress-navbar.component';
 
 
 
@@ -32,7 +33,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     UploadComponent,
     DateRangesComponent,
     TrainModelComponent,
-    SimulationComponent
+    SimulationComponent,
+    ProgressNavbarComponent
   ],
   imports: [
     HttpClientModule,

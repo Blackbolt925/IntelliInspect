@@ -1,0 +1,42 @@
+.progress-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.step {
+  text-align: center;
+  flex: 1;
+
+  &.done .step-circle {
+    background-color: #4caf50; // green
+  }
+
+  &.active .step-circle {
+    background-color: #1e88e5; // blue
+  }
+
+  &.upcoming .step-circle {
+    background-color: #ccc; // grey
+  }
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 5px;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}

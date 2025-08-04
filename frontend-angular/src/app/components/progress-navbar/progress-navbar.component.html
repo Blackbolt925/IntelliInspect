@@ -1,0 +1,14 @@
+<div class="progress-nav">
+  <div
+    class="step"
+    *ngFor="let step of steps; let i = index"
+    [ngClass]="{
+      'done': i < currentStep - 1,
+      'active': i === currentStep - 1,
+      'upcoming': i > currentStep - 1
+    }"
+  >
+    <div class="step-circle">{{ i + 1 }}</div>
+    <div class="step-label">{{ step.label }}</div>
+  </div>
+</div>
