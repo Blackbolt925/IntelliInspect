@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -8,10 +8,13 @@ export class FileUploadService {
 
   constructor(private http: HttpClient) {}
 
-  uploadCSV(file: File): Observable<any> {
+  uploadCSV(file: File): Observable<HttpEvent<any>> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(this.API_URL, formData);
+    return this.http.post<any>(this.API_URL, formData, {
+      reportProgress: true,
+      observe: 'events'
+    });
   }
 
   // uploadCSV(file: File): Observable<any> {

@@ -13,6 +13,7 @@ export class UploadComponent {
   fileName: string = '';
   metadata: any = null;
   isUploading = false;
+  progress = 0;
   error = '';
 
   constructor(private fileUploadService: FileUploadService, private router: Router) {}
@@ -58,12 +59,17 @@ export class UploadComponent {
     if (!this.selectedFile) return;
 
     this.isUploading = true;
+    this.progress = 0;
     this.error = '';
 
     this.fileUploadService.uploadCSV(this.selectedFile).subscribe({
-      next: (res) => {
-        this.metadata = res;
-        this.isUploading = false;
+      next: (event) => {
+        if (event.type === 1 && event.total) { // HttpEventType.UploadProgress
+          this.progress = Math.round(100 * event.loaded / event.total);
+        } else if (event.type === 4) { // HttpEventType.Response
+          this.metadata = event.body;
+          this.isUploading = false;
+        }
       },
       error: (err) => {
         this.error = 'Failed to upload file.';

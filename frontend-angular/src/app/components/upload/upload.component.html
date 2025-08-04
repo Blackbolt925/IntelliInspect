@@ -4,7 +4,8 @@
 <div *ngIf="!metadata">
   <h2>Upload Dataset</h2>
 
-  <mat-progress-bar *ngIf="isUploading" mode="indeterminate" color="primary"></mat-progress-bar>
+  <mat-progress-bar *ngIf="isUploading" mode="determinate" color="primary" [value]="progress"></mat-progress-bar>
+  <div *ngIf="isUploading && progress > 0" class="progress-label">{{progress}}%</div>
 
   <div class="upload-area" [class.disabled]="isUploading"
        (drop)="!isUploading && onDrop($event)"

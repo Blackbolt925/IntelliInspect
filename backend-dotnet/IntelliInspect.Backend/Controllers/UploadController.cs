@@ -10,6 +10,13 @@ using System.Linq;
 [Route("api/[controller]")]
 public class UploadController : ControllerBase
 {
+    private readonly ILogger<UploadController> _logger;
+
+    public UploadController(ILogger<UploadController> logger)
+    {
+        _logger = logger;
+    }
+
     [HttpPost]
     [RequestSizeLimit(2147483648)] // 2GB
     public async Task<IActionResult> UploadCsv(IFormFile file)
@@ -26,6 +33,21 @@ public class UploadController : ControllerBase
 
         try
         {
+            // Create directory if it doesn't exist
+            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
+            Directory.CreateDirectory(uploadDir);
+
+            // Define the file path
+            var filePath = Path.Combine(uploadDir, "latest.csv");
+
+            // Save the file first
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            _logger.LogInformation($"CSV file saved to: {Path.GetFullPath(filePath)}");
+
+            // Now process the saved file
             using var stream = file.OpenReadStream();
             using var reader = new StreamReader(stream);
             string? headerLine = await reader.ReadLineAsync();
