@@ -1,14 +1,24 @@
-<div class="progress-nav">
-  <div
-    class="step"
-    *ngFor="let step of steps; let i = index"
-    [ngClass]="{
-      'done': i < currentStep - 1,
-      'active': i === currentStep - 1,
-      'upcoming': i > currentStep - 1
-    }"
-  >
-    <div class="step-circle">{{ i + 1 }}</div>
-    <div class="step-label">{{ step.label }}</div>
+<!-- progress-navbar.component.html -->
+<div class="progress-navbar">
+  <div class="steps-container">
+    <div class="step-quadrant"
+         *ngFor="let step of steps; let i = index"
+         [ngClass]="{
+           'completed': i < currentStep,
+           'active': i === currentStep,
+           'pending': i > currentStep
+         }">
+      <div class="step-content">
+        <div class="step-circle">
+          <span class="step-number">{{ i + 1 }}</span>
+        </div>
+        <span class="step-label">{{ step.label }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <div class="step-title">{{ steps[currentStep].title }}</div>
+    <div class="step-indicator">Step {{ currentStep + 1 }} of {{ steps.length }}</div>
   </div>
 </div>
