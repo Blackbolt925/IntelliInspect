@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class FileUploadService {
-  private API_URL = 'http://localhost:5000/api/Upload'; // Update this to your backend endpoint
+  private API_URL = 'http://localhost:5229/api/Upload'; // Update this to your backend endpoint
 
   constructor(private http: HttpClient) {}
 

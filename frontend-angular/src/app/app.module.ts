@@ -20,6 +20,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProgressNavbarComponent } from './components/progress-navbar/progress-navbar.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -55,6 +56,7 @@ import { CommonModule } from '@angular/common';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatProgressBarModule,
     BrowserModule,
     AppRoutingModule,
     CommonModule

@@ -4,22 +4,24 @@
 <div *ngIf="!metadata">
   <h2>Upload Dataset</h2>
 
-  <div class="upload-area"
-       (drop)="onDrop($event)"
+  <mat-progress-bar *ngIf="isUploading" mode="indeterminate" color="primary"></mat-progress-bar>
+
+  <div class="upload-area" [class.disabled]="isUploading"
+       (drop)="!isUploading && onDrop($event)"
        (dragover)="onDragOver($event)">
     <p>Click to select a CSV file or drag and drop</p>
-    <input type="file" accept=".csv" (change)="onFileSelected($event)" hidden #fileInput />
-    <button mat-raised-button color="primary" (click)="fileInput.click()">Choose File</button>
+    <input type="file" accept=".csv" (change)="onFileSelected($event)" hidden #fileInput [disabled]="isUploading" />
+    <button mat-raised-button color="primary" (click)="fileInput.click()" [disabled]="isUploading">Choose File</button>
   </div>
 </div>
 
 <!-- Show metadata only when available -->
 <div *ngIf="metadata" class="meta-summary">
-  <mat-card class="card">Records <br /><strong>{{ metadata.totalRecords }}</strong></mat-card>
-  <mat-card class="card">Columns <br /><strong>{{ metadata.totalColumns }}</strong></mat-card>
-  <mat-card class="card">Pass Rate <br /><strong>{{ metadata.passRate }}%</strong></mat-card>
+  <mat-card class="card">Records <br /><strong>{{ metadata.totalRows }}</strong></mat-card>
+  <mat-card class="card">Columns <br /><strong>{{ metadata.totalCols }}</strong></mat-card>
+  <mat-card class="card">Pass Rate <br /><strong>{{ metadata.percentResponseEqualsOne }}%</strong></mat-card>
   <mat-card class="card">Date Range <br />
-    <strong>{{ metadata.dateStart }}</strong> to <strong>{{ metadata.dateEnd }}</strong>
+    <strong>{{ metadata.startTimestamp }}</strong> to <strong>{{ metadata.endTimestamp }}</strong>
   </mat-card>
 
   <button mat-raised-button color="accent" class="next-btn" (click)="proceed()">Next</button>

@@ -22,7 +22,7 @@ export class UploadComponent {
     if (file && file.size > environment.MAX_FILE_SIZE) {
       this.error = `File Size exceeded Max limit ${environment.MAX_FILE_SIZE}`;
     }
-    else if (file && file.type === 'text/csv') {
+    else if (file && (file.type === 'text/csv' || file.name.toLowerCase().endsWith('.csv'))) {
       this.selectedFile = file;
       this.fileName = file.name;
       this.error = '';
@@ -39,7 +39,7 @@ export class UploadComponent {
     if (file && file.size > environment.MAX_FILE_SIZE) {
       this.error = `File Size exceeded Max limit ${environment.MAX_FILE_SIZE}`;
     }
-    else if (file && file.type === 'text/csv') {
+    else if (file && (file.type === 'text/csv' || file.name.toLowerCase().endsWith('.csv'))) {
       this.selectedFile = file;
       this.fileName = file.name;
       this.error = '';

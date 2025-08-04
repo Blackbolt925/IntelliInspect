@@ -32,6 +32,13 @@ h2 {
     background: #f0f4ff; /* light indigo tint */
   }
 
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    background: #f1f5f9;
+    cursor: not-allowed;
+  }
+
   p {
     color: #64748b;
     font-size: 0.95rem;
