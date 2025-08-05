@@ -3,9 +3,10 @@ import { DateRangeService } from '../../services/date-range.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-date-ranges',
-  templateUrl: './date-ranges.component.html',
-  styleUrls: ['./date-ranges.component.scss']
+    selector: 'app-date-ranges',
+    templateUrl: './date-ranges.component.html',
+    styleUrls: ['./date-ranges.component.scss'],
+    standalone: false
 })
 export class DateRangesComponent {
   trainStart = '';

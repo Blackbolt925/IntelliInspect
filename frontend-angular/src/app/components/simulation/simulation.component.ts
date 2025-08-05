@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { SimulationService } from '../../services/simulation.service';
 
 @Component({
-  selector: 'app-simulation',
-  templateUrl: './simulation.component.html',
-  styleUrls: ['./simulation.component.scss']
+    selector: 'app-simulation',
+    templateUrl: './simulation.component.html',
+    styleUrls: ['./simulation.component.scss'],
+    standalone: false
 })
 export class SimulationComponent {
   isRunning = false;

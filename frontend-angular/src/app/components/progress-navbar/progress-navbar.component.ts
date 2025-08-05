@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-progress-navbar',
-  templateUrl: './progress-navbar.component.html',
-  styleUrls: ['./progress-navbar.component.scss']
+    selector: 'app-progress-navbar',
+    templateUrl: './progress-navbar.component.html',
+    styleUrls: ['./progress-navbar.component.scss'],
+    standalone: false
 })
 export class ProgressNavbarComponent {
   @Input() currentStep: number = 1;

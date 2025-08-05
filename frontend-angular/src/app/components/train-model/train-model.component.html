@@ -19,21 +19,19 @@
 
 <div class="charts-container" *ngIf="trained">
   <div class="chart">
-    <h4>Training & Testing Loss</h4>
-    <canvas baseChart
-      [data]="lineChartData"
+    <highcharts-chart 
+      [Highcharts]="Highcharts" 
       [options]="lineChartOptions"
-      chartType="line">
-    </canvas>
+      style="width: 100%; height: 400px; display: block;">
+    </highcharts-chart>
   </div>
 
   <div class="chart">
-    <h4>Confusion Matrix</h4>
-    <canvas baseChart
-      [data]="donutChartData"
-      [options]="donutOptions"
-      chartType="doughnut">
-    </canvas>
+    <highcharts-chart 
+      [Highcharts]="Highcharts" 
+      [options]="donutChartOptions"
+      style="width: 100%; height: 400px; display: block;">
+    </highcharts-chart>
   </div>
 </div>
 

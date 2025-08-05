@@ -4,9 +4,10 @@ import { FileUploadService } from '../../services/file-upload.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'app-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss']
+    selector: 'app-upload',
+    templateUrl: './upload.component.html',
+    styleUrls: ['./upload.component.scss'],
+    standalone: false
 })
 export class UploadComponent {
   selectedFile: File | null = null;

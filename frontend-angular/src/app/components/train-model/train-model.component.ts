@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import * as Highcharts from 'highcharts';
 import { TrainService } from '../../services/train.service';
 import { Router } from '@angular/router';
-import { ChartData, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-train-model',
@@ -9,40 +9,15 @@ import { ChartData, ChartOptions } from 'chart.js';
   styleUrls: ['./train-model.component.scss']
 })
 export class TrainModelComponent {
+  Highcharts: typeof Highcharts = Highcharts;
+
   training = false;
   trained = false;
   metrics: any = null;
   statusMsg = '';
 
-  lineChartData: ChartData<'line'> = {
-    labels: [],
-    datasets: []
-  };
-
-  donutChartData: ChartData<'doughnut'> = {
-    labels: ['TP', 'TN', 'FP', 'FN'],
-    datasets: [{
-      data: [],
-      backgroundColor: ['#4caf50', '#2196f3', '#f44336', '#ff9800']
-    }]
-  };
-
-  lineChartOptions: ChartOptions<'line'> = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      title: { display: true, text: 'Training & Testing Loss' }
-    }
-  };
-
-  donutOptions: ChartOptions<'doughnut'> = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'right' },
-      title: { display: true, text: 'Confusion Matrix' }
-    },
-    cutout: '60%'
-  };
+  lineChartOptions: Highcharts.Options = {};
+  donutChartOptions: Highcharts.Options = {};
 
   constructor(private trainService: TrainService, private router: Router) {}
 
@@ -64,33 +39,40 @@ export class TrainModelComponent {
         this.training = false;
         this.statusMsg = '✔ Model Trained Successfully';
 
-        // Chart labels based on epochs
         const labels = res.trainLoss.map((_: any, i: number) => `Epoch ${i + 1}`);
 
-        this.lineChartData = {
-          labels,
-          datasets: [
-            {
-              label: 'Train Loss',
-              data: res.trainLoss,
-              borderColor: 'blue',
-              fill: false
-            },
-            {
-              label: 'Test Loss',
-              data: res.testLoss,
-              borderColor: 'red',
-              fill: false
-            }
+        this.lineChartOptions = {
+          title: { text: 'Training & Testing Loss' },
+          xAxis: { categories: labels },
+          yAxis: { title: { text: 'Loss' } },
+          series: [
+            { name: 'Train Loss', type: 'line', data: res.trainLoss },
+            { name: 'Test Loss', type: 'line', data: res.testLoss }
           ]
         };
 
         const { TP, TN, FP, FN } = res.confusionMatrix;
-        this.donutChartData = {
-          labels: ['TP', 'TN', 'FP', 'FN'],
-          datasets: [{
-            data: [TP, TN, FP, FN],
-            backgroundColor: ['#4caf50', '#2196f3', '#f44336', '#ff9800']
+
+        this.donutChartOptions = {
+          chart: {
+            type: 'pie'
+          },
+          title: { text: 'Confusion Matrix' },
+          plotOptions: {
+            pie: {
+              innerSize: '60%',
+              dataLabels: { enabled: true }
+            }
+          },
+          series: [{
+            name: 'Counts',
+            type: 'pie',
+            data: [
+              { name: 'TP', y: TP },
+              { name: 'TN', y: TN },
+              { name: 'FP', y: FP },
+              { name: 'FN', y: FN }
+            ]
           }]
         };
       },

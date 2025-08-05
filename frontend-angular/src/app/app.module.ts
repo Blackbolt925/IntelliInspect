@@ -27,7 +27,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
-import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 
 
@@ -61,13 +61,12 @@ import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2
     BrowserModule,
     AppRoutingModule,
     CommonModule,
-    BaseChartDirective
+    HighchartsChartModule
 
   ],
   providers: [
     provideClientHydration(),
-    provideAnimationsAsync(),
-    provideCharts(withDefaultRegisterables())
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })
