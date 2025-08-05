@@ -75,7 +75,7 @@ public class UploadController : ControllerBase
                 }
 
                 // Augment with timestamp (not returned, but for parity)
-                // rowDict["Timestamp"] = startTimestamp.AddSeconds(i).ToString("yyyy-MM-dd HH:mm:ss");
+                rowDict["Timestamp"] = startTimestamp.AddSeconds(i).ToString("yyyy-MM-dd HH:mm:ss");
 
                 // Count Response == 1
                 if (rowDict.ContainsKey("Response") && rowDict["Response"] == "1")

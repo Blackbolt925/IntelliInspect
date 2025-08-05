@@ -1,0 +1,62 @@
+# .gitignore for IntelliInspect (Angular + .NET + Python)
+
+# Node (Angular frontend)
+frontend-angular/node_modules/
+frontend-angular/dist/
+frontend-angular/.angular/cache/
+frontend-angular/.env
+
+# Angular build artifacts
+frontend-angular/.angular/
+frontend-angular/.output/
+
+# VSCode
+.vscode/
+
+# Python (ml-service-fastapi)
+ml-service-fastapi/__pycache__/
+ml-service-fastapi/.env
+ml-service-fastapi/.pytest_cache/
+ml-service-fastapi/.mypy_cache/
+ml-service-fastapi/.venv/
+ml-service-fastapi/venv/
+ml-service-fastapi/.ipynb_checkpoints/
+
+# .NET (backend-dotnet)
+backend-dotnet/**/bin/
+backend-dotnet/**/obj/
+backend-dotnet/**/TestResults/
+backend-dotnet/**/out/
+backend-dotnet/**/publish/
+backend-dotnet/**/Generated_Code/
+backend-dotnet/**/appsettings.Development.json
+backend-dotnet/**/appsettings.Local.json
+backend-dotnet/**/appsettings.*.json.user
+backend-dotnet/**/secrets.json
+
+# Logs
+*.log
+logs/
+
+# Uploaded files
+backend-dotnet/IntelliInspect.Backend/UploadedFiles/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+*.tmp
+*.bak
+.idea/
+*.user
+*.sln.docstates
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore Jupyter Notebook checkpoints
+**/.ipynb_checkpoints/
