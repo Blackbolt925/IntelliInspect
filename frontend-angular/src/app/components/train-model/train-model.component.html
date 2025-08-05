@@ -1,58 +1,42 @@
 <app-stepper [activeStep]="3"></app-stepper>
 
-<!-- Outer Content Card -->
-<div class="content-card">
+<h2>Model Training & Evaluation</h2>
 
-  <!-- Inner Section Header Box -->
-  
+<div class="center-box">
+  <button mat-raised-button color="primary" (click)="trainModel()" [disabled]="training || trained">
+    Train Model
+  </button>
+  <p *ngIf="statusMsg" class="status">{{ statusMsg }}</p>
+</div>
 
-  <!-- Centered Train Model Button -->
-  <div class="center-box">
-    <button 
-      class="train-button"
-      (click)="trainModel()" 
-      [disabled]="training || trained">
-      {{ training ? 'Training...' : 'Train Model' }}
-    </button>
+<div *ngIf="trained && metrics" class="metrics-cards">
+  <mat-card class="metric">Accuracy<br><strong>{{ metrics.accuracy }}%</strong></mat-card>
+  <mat-card class="metric">Precision<br><strong>{{ metrics.precision }}%</strong></mat-card>
+  <mat-card class="metric">Recall<br><strong>{{ metrics.recall }}%</strong></mat-card>
+  <mat-card class="metric">F1-Score<br><strong>{{ metrics.f1Score }}%</strong></mat-card>
+  <mat-card class="metric">MCC<br><strong>{{ metrics.mcc }}</strong></mat-card>
+</div>
 
-    <!-- Status message below button -->
-    <p *ngIf="statusMsg" class="status">{{ statusMsg }}</p>
+<div class="charts-container" *ngIf="trained">
+  <div class="chart">
+    <h4>Training & Testing Loss</h4>
+    <canvas baseChart
+      [data]="lineChartData"
+      [options]="lineChartOptions"
+      chartType="line">
+    </canvas>
   </div>
 
-  <!-- Show Metrics + Charts ONLY after training is done -->
-  <div *ngIf="trained">
-
-    <!-- Metrics Cards -->
-    <div class="metrics-cards" *ngIf="metrics">
-      <mat-card class="metric">Accuracy<br><strong>{{ metrics.accuracy }}%</strong></mat-card>
-      <mat-card class="metric">Precision<br><strong>{{ metrics.precision }}%</strong></mat-card>
-      <mat-card class="metric">Recall<br><strong>{{ metrics.recall }}%</strong></mat-card>
-      <mat-card class="metric">F1-Score<br><strong>{{ metrics.f1Score }}%</strong></mat-card>
-    </div>
-
-    <!-- Chart Placeholders -->
-    <div class="charts-container">
-      <div class="chart">
-        <h4>Training Metrics</h4>
-        <p>[Line Chart Placeholder]</p>
-      </div>
-      <div class="chart">
-        <h4>Model Performance</h4>
-        <p>[Donut Chart Placeholder]</p>
-      </div>
-    </div>
-
+  <div class="chart">
+    <h4>Confusion Matrix</h4>
+    <canvas baseChart
+      [data]="donutChartData"
+      [options]="donutOptions"
+      chartType="doughnut">
+    </canvas>
   </div>
+</div>
 
-  <!-- Next Button bottom right -->
-  <div class="next-action">
-    <button 
-      mat-raised-button 
-      color="accent" 
-      (click)="next()" 
-      [disabled]="!trained">
-      Next
-    </button>
-  </div>
-
+<div class="next-action">
+  <button mat-raised-button color="accent" (click)="next()">Next</button>
 </div>

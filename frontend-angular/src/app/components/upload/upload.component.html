@@ -1,8 +1,6 @@
-<app-progress-navbar [currentStep]="3"></app-progress-navbar>
-
 <!-- Show upload UI only when there's no metadata yet -->
 <div *ngIf="!metadata">
-  <h2>Upload Dataset</h2>
+  <app-progress-navbar [currentStep]="0"></app-progress-navbar>
 
   <mat-progress-bar *ngIf="isUploading" mode="determinate" color="primary" [value]="progress"></mat-progress-bar>
   <div *ngIf="isUploading && progress > 0" class="progress-label">{{progress}}%</div>
@@ -18,6 +16,7 @@
 
 <!-- Show metadata only when available -->
 <div *ngIf="metadata" class="meta-summary">
+  <app-progress-navbar [currentStep]="0"></app-progress-navbar>
   <mat-card class="card">Records <br /><strong>{{ metadata.totalRows }}</strong></mat-card>
   <mat-card class="card">Columns <br /><strong>{{ metadata.totalCols }}</strong></mat-card>
   <mat-card class="card">Pass Rate <br /><strong>{{ metadata.percentResponseEqualsOne }}%</strong></mat-card>
