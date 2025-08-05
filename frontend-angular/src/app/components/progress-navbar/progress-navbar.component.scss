@@ -1,42 +1,142 @@
-.progress-nav {
+// progress-navbar.component.scss
+.progress-navbar {
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.steps-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 16px;
 }
 
-.step {
-  text-align: center;
+.step-quadrant {
   flex: 1;
-
-  &.done .step-circle {
-    background-color: #4caf50; // green
-  }
-
-  &.active .step-circle {
-    background-color: #1e88e5; // blue
-  }
-
-  &.upcoming .step-circle {
-    background-color: #ccc; // grey
-  }
-}
-
-.step-circle {
-  width: 32px;
-  height: 32px;
-  margin: 0 auto 5px;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 12px 8px;
+  position: relative;
+
+  // Bottom margin/indicator
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+}
+
+.step-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-circle {
+  width: 30px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  border: 2px solid;
+  flex-shrink: 0;
+}
+
+.step-number {
+  line-height: 1;
 }
 
 .step-label {
-  font-size: 0.9rem;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-align: center;
+}
+
+// Completed step styles - GREEN quadrant
+.completed {
+  background-color: #dcfce7; // Light green background for the whole quadrant
+
+  &::after {
+    background-color: #22c55e; // Green bottom margin
+  }
+
+  .step-circle {
+    background-color: #22c55e;
+    color: white;
+    border-color: #22c55e;
+  }
+
+  .step-label {
+    color: #15803d;
+    font-weight: 600;
+  }
+}
+
+// Active step styles - BLUE quadrant
+.active {
+  background-color: transparent;
+
+  &::after {
+    background-color: #3b82f6; // Blue bottom margin
+  }
+
+  .step-circle {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+
+  .step-label {
+    color: #1d4ed8;
+    font-weight: 600;
+  }
+}
+
+// Pending step styles - GREY, no bottom margin
+.pending {
+  background-color: transparent; // No background color
+
+  &::after {
+    background-color: #9ca3af; // No bottom margin
+  }
+
+  .step-circle {
+    background-color: #9ca3af;
+    color: white;
+    border-color: #9ca3af;
+  }
+
+  .step-label {
+    color: #6b7280;
+  }
+}
+
+.bottom-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.step-indicator {
+  font-size: 14px;
+  background-color: #3b82f6;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-weight: 500;
 }

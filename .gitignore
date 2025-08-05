@@ -5,6 +5,7 @@ frontend-angular/node_modules/
 frontend-angular/dist/
 frontend-angular/.angular/cache/
 frontend-angular/.env
+node_modules/
 
 # Angular build artifacts
 frontend-angular/.angular/
