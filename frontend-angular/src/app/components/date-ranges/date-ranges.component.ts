@@ -206,7 +206,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Create bar chart matching the design in the image
+  // Create bar chart
   private createChart(): void {
     if (!this.barChartRef || this.chartData.length === 0) {
       return;
@@ -301,6 +301,18 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Navigate to next step
   next(): void {
     if (this.validationSuccess) {
+      // Save to local storage
+      const dateRanges = {
+        TrainStart: this.trainStart,
+        TrainEnd: this.trainEnd,
+        TestStart: this.testStart,
+        TestEnd: this.testEnd,
+        SimulationStart: this.simStart,
+        SimulationEnd: this.simEnd
+      };
+      localStorage.setItem('dateRanges', JSON.stringify(dateRanges));
+      console.log('Date ranges saved to local storage:', dateRanges);
+
       // Send final selected date ranges to backend before navigation
       const finalPayload = {
         trainStart: this.trainStart,
@@ -317,7 +329,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dateService.submitDateRanges(finalPayload).subscribe({
         next: (response) => {
           console.log('Date ranges submitted successfully:', response);
-          this.router.navigate(['/model-training']);
+          this.router.navigate(['/train-model']);
         },
         error: (error) => {
           console.error('Failed to submit date ranges:', error);
