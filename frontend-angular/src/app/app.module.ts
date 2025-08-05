@@ -27,8 +27,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
-import { HighchartsChartModule } from 'highcharts-angular';
-
+import { NgChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -38,8 +37,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
     FooterComponent,
     StepperComponent,
     UploadComponent,
-    DateRangesComponent,
     TrainModelComponent,
+    DateRangesComponent,
     SimulationComponent,
     ProgressNavbarComponent
   ],
@@ -61,8 +60,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
     BrowserModule,
     AppRoutingModule,
     CommonModule,
-    HighchartsChartModule
-
+    NgChartsModule
   ],
   providers: [
     provideClientHydration(),

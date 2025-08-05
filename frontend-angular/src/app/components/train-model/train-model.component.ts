@@ -1,23 +1,37 @@
 import { Component } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import { ChartConfiguration } from 'chart.js';
 import { TrainService } from '../../services/train.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-train-model',
   templateUrl: './train-model.component.html',
-  styleUrls: ['./train-model.component.scss']
+  styleUrls: ['./train-model.component.scss'],
+  standalone: false
 })
 export class TrainModelComponent {
-  Highcharts: typeof Highcharts = Highcharts;
-
   training = false;
   trained = false;
   metrics: any = null;
   statusMsg = '';
 
-  lineChartOptions: Highcharts.Options = {};
-  donutChartOptions: Highcharts.Options = {};
+  lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+    datasets: []
+  };
+  lineChartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    plugins: { legend: { position: 'top' } }
+  };
+
+  pieChartData: ChartConfiguration<'pie'>['data'] = {
+    labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],
+    datasets: []
+  };
+  pieChartOptions: ChartConfiguration<'pie'>['options'] = {
+    responsive: true,
+    plugins: { legend: { position: 'top' } }
+  };
 
   constructor(private trainService: TrainService, private router: Router) {}
 
@@ -39,41 +53,36 @@ export class TrainModelComponent {
         this.training = false;
         this.statusMsg = '✔ Model Trained Successfully';
 
-        const labels = res.trainLoss.map((_: any, i: number) => `Epoch ${i + 1}`);
+        const labels = res.trainAccuracy.map((_: any, i: number) => `Epoch ${i + 1}`);
 
-        this.lineChartOptions = {
-          title: { text: 'Training & Testing Loss' },
-          xAxis: { categories: labels },
-          yAxis: { title: { text: 'Loss' } },
-          series: [
-            { name: 'Train Loss', type: 'line', data: res.trainLoss },
-            { name: 'Test Loss', type: 'line', data: res.testLoss }
+        this.lineChartData = {
+          labels,
+          datasets: [
+            {
+              label: 'Training Accuracy',
+              data: res.trainAccuracy,
+              borderColor: 'green',
+              fill: false
+            },
+            {
+              label: 'Training Loss',
+              data: res.trainLoss,
+              borderColor: 'red',
+              fill: false
+            }
           ]
         };
 
         const { TP, TN, FP, FN } = res.confusionMatrix;
 
-        this.donutChartOptions = {
-          chart: {
-            type: 'pie'
-          },
-          title: { text: 'Confusion Matrix' },
-          plotOptions: {
-            pie: {
-              innerSize: '60%',
-              dataLabels: { enabled: true }
+        this.pieChartData = {
+          labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],
+          datasets: [
+            {
+              data: [TP, TN, FP, FN],
+              backgroundColor: ['#28a745', '#17a2b8', '#dc3545', '#ffc107']
             }
-          },
-          series: [{
-            name: 'Counts',
-            type: 'pie',
-            data: [
-              { name: 'TP', y: TP },
-              { name: 'TN', y: TN },
-              { name: 'FP', y: FP },
-              { name: 'FN', y: FN }
-            ]
-          }]
+          ]
         };
       },
       error: () => {
