@@ -14,18 +14,21 @@ namespace IntelliInspect.Backend.Controllers
             _logger = logger;
         }
 
+
         public class TrainModelLogRequest
         {
-            public string TrainStart { get; set; }
-            public string TrainEnd { get; set; }
-            public string TestStart { get; set; }
-            public string TestEnd { get; set; }
+            public string? TrainStart { get; set; }
+            public string? TrainEnd { get; set; }
+            public string? TestStart { get; set; }
+            public string? TestEnd { get; set; }
+            public string? SimulationStart { get; set; }
+            public string? SimulationEnd { get; set; }
         }
 
         [HttpPost]
         public async Task<IActionResult> LogTrainModel([FromBody] TrainModelLogRequest request)
         {
-            _logger.LogInformation($"[TrainModelLog] TrainStart={request.TrainStart}, TrainEnd={request.TrainEnd}, TestStart={request.TestStart}, TestEnd={request.TestEnd}");
+            _logger.LogInformation($"[TrainModelLog] TrainStart={request.TrainStart}, TrainEnd={request.TrainEnd}, TestStart={request.TestStart}, TestEnd={request.TestEnd}, SimulationStart={request.SimulationStart}, SimulationEnd={request.SimulationEnd}");
 
             // Path to the CSV file to send
             var csvFilePath = "UploadedFiles/latest.csv";
@@ -41,6 +44,8 @@ namespace IntelliInspect.Backend.Controllers
             multipartContent.Add(new System.Net.Http.StringContent(request.TrainEnd ?? ""), "trainEnd");
             multipartContent.Add(new System.Net.Http.StringContent(request.TestStart ?? ""), "testStart");
             multipartContent.Add(new System.Net.Http.StringContent(request.TestEnd ?? ""), "testEnd");
+            multipartContent.Add(new System.Net.Http.StringContent(request.SimulationStart ?? ""), "simulationStart");
+            multipartContent.Add(new System.Net.Http.StringContent(request.SimulationEnd ?? ""), "simulationEnd");
             using var fileStream = System.IO.File.OpenRead(csvFilePath);
             multipartContent.Add(new System.Net.Http.StreamContent(fileStream), "file", "latest.csv");
 
