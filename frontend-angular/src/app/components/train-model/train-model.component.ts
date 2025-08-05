@@ -20,10 +20,10 @@ export class TrainModelComponent {
     this.statusMsg = 'Training in progress...';
 
     const payload = {
-      trainStart: localStorage.getItem('trainStart'),
-      trainEnd: localStorage.getItem('trainEnd'),
-      testStart: localStorage.getItem('testStart'),
-      testEnd: localStorage.getItem('testEnd')
+      trainStart: localStorage.getItem('trainStart') || '',
+      trainEnd: localStorage.getItem('trainEnd') || '',
+      testStart: localStorage.getItem('testStart') || '',
+      testEnd: localStorage.getItem('testEnd') || ''
     };
 
     this.trainService.trainModel(payload).subscribe({
