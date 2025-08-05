@@ -1,4 +1,3 @@
-// services/date-range.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -11,7 +10,7 @@ interface DateConstraints {
 interface ValidationResponse {
   status: 'valid' | 'invalid';
   message: string;
-  chartData: ChartDataPoint[];
+  chartData?: ChartDataPoint[];
   errors?: string[];
 }
 
@@ -39,22 +38,22 @@ interface DateRangePayload {
   providedIn: 'root'
 })
 export class DateRangeService {
-  private baseUrl = 'http://your-backend-url/api'; // Replace with your actual backend URL
+  private baseUrl = 'http://localhost:5229/api/DateRange';
 
   constructor(private http: HttpClient) {}
 
   // Get min/max date constraints from backend
   getDateConstraints(): Observable<DateConstraints> {
-    return this.http.get<DateConstraints>(`${this.baseUrl}/date-constraints`);
+    return this.http.get<DateConstraints>(`${this.baseUrl}/constraints`);
   }
 
   // Validate date ranges and get chart data
   validateDateRanges(payload: DateRangePayload): Observable<ValidationResponse> {
-    return this.http.post<ValidationResponse>(`${this.baseUrl}/validate-date-ranges`, payload);
+    return this.http.post<ValidationResponse>(`${this.baseUrl}/validate`, payload);
   }
 
   // Submit final date ranges selection
   submitDateRanges(payload: DateRangePayload): Observable<any> {
-    return this.http.post(`${this.baseUrl}/submit-date-ranges`, payload);
+    return this.http.post(`${this.baseUrl}/submit`, payload);
   }
 }

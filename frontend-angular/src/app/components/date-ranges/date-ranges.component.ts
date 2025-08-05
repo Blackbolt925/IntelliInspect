@@ -1,5 +1,4 @@
-// date-ranges.component.ts
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { DateRangeService } from '../../services/date-range.service';
 import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
@@ -36,7 +35,7 @@ interface DateConstraints {
   templateUrl: './date-ranges.component.html',
   styleUrls: ['./date-ranges.component.scss']
 })
-export class DateRangesComponent implements OnInit, AfterViewInit {
+export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('barChart') barChartRef!: ElementRef<HTMLCanvasElement>;
 
   // Date inputs
@@ -53,6 +52,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
 
   // Validation state
   validationSuccess = false;
+  validationErrors: string[] = [];
   recordCounts: RecordCounts | null = null;
   chartData: ChartData[] = [];
 
@@ -76,25 +76,32 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
   loadDateConstraints(): void {
     this.dateService.getDateConstraints().subscribe({
       next: (constraints: DateConstraints) => {
-        this.minDate = constraints.minDate;
-        this.maxDate = constraints.maxDate;
+        // Convert datetime to date format for input fields
+        this.minDate = this.formatDateForInput(constraints.minDate);
+        this.maxDate = this.formatDateForInput(constraints.maxDate);
 
-        // If same year, you can add logic here to restrict to year
-        const minYear = new Date(this.minDate).getFullYear();
-        const maxYear = new Date(this.maxDate).getFullYear();
-
-        if (minYear === maxYear) {
-          // Same year - user can only change month/day
-          console.log('Same year detected:', minYear);
-        }
+        console.log('Date constraints loaded:', {
+          min: this.minDate,
+          max: this.maxDate
+        });
       },
       error: (error) => {
         console.error('Failed to load date constraints:', error);
-        // Set default constraints
-        this.minDate = '2020-01-01';
-        this.maxDate = '2024-12-31';
+        // Set default constraints if backend fails
+        this.minDate = '2021-01-01';
+        this.maxDate = '2021-12-31';
       }
     });
+  }
+
+  // Convert datetime string to date format for HTML input
+  private formatDateForInput(dateTimeString: string): string {
+    try {
+      const date = new Date(dateTimeString);
+      return date.toISOString().split('T')[0];
+    } catch {
+      return dateTimeString.split(' ')[0]; // fallback for YYYY-MM-DD HH:mm:ss format
+    }
   }
 
   // Check if validation can be performed
@@ -139,6 +146,12 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    // Reset previous validation state
+    this.validationSuccess = false;
+    this.validationErrors = [];
+    this.recordCounts = null;
+    this.chartData = [];
+
     // Prepare payload for backend
     const payload = {
       trainStart: this.trainStart,
@@ -154,8 +167,9 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
       next: (response) => {
         if (response.status === 'valid') {
           this.validationSuccess = true;
+          this.validationErrors = [];
 
-          // Calculate days (can be done in frontend or received from backend)
+          // Calculate days
           this.recordCounts = {
             trainDays: this.calculateDays(this.trainStart, this.trainEnd),
             trainStart: this.trainStart,
@@ -177,6 +191,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
           }, 100);
         } else {
           this.validationSuccess = false;
+          this.validationErrors = response.errors || [response.message];
           this.recordCounts = null;
           this.chartData = [];
         }
@@ -184,13 +199,14 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
       error: (error) => {
         console.error('Validation failed:', error);
         this.validationSuccess = false;
+        this.validationErrors = ['Failed to validate date ranges. Please try again.'];
         this.recordCounts = null;
         this.chartData = [];
       }
     });
   }
 
-  // Create bar chart
+  // Create bar chart matching the design in the image
   private createChart(): void {
     if (!this.barChartRef || this.chartData.length === 0) {
       return;
@@ -205,7 +221,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
     if (!ctx) return;
 
     // Prepare chart data
-    const labels = this.chartData.map(item => `${item.month} ${item.year}`);
+    const labels = this.chartData.map(item => item.month);
 
     this.chart = new Chart(ctx, {
       type: 'bar',
@@ -240,7 +256,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'top',
+            display: false // Hide legend as shown in the image
           },
           title: {
             display: false
@@ -250,15 +266,32 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
           x: {
             title: {
               display: true,
-              text: 'Timeline (Year)'
+              text: 'Timeline (Year)',
+              font: {
+                size: 12
+              }
+            },
+            grid: {
+              display: false
             }
           },
           y: {
             title: {
               display: true,
-              text: 'Volume'
+              text: 'Volume',
+              font: {
+                size: 12
+              }
             },
-            beginAtZero: true
+            beginAtZero: true,
+            grid: {
+              color: '#e5e7eb'
+            }
+          }
+        },
+        elements: {
+          bar: {
+            borderRadius: 2
           }
         }
       }
@@ -288,7 +321,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit {
         },
         error: (error) => {
           console.error('Failed to submit date ranges:', error);
-          // Navigate anyway or show error message
+          // Navigate anyway for now
           this.router.navigate(['/model-training']);
         }
       });

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/forms": "^20.1.4",
+    "chart.js": "^4.5.0"
+  }
+}
