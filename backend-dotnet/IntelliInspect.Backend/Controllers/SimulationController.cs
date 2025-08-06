@@ -45,38 +45,45 @@ public class SimulationController : ControllerBase
     }
 
     [HttpGet("stream")]
-    public async Task StreamSimulation()
+public async Task StreamSimulation()
+{
+    Response.Headers["Content-Type"] = "text/event-stream";
+    Response.Headers["Cache-Control"] = "no-cache";
+    Response.Headers["Connection"] = "keep-alive";
+
+    var (simStart, simEnd) = LoadSimulationRange();
+    if (string.IsNullOrWhiteSpace(simStart) || string.IsNullOrWhiteSpace(simEnd))
     {
-        Response.Headers["Content-Type"] = "text/event-stream";
-        Response.Headers["Cache-Control"] = "no-cache";
-        Response.Headers["Connection"] = "keep-alive";
+        await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = "Simulation range not available" })}\n\n");
+        await Response.Body.FlushAsync();
+        return;
+    }
 
-        var (simStart, simEnd) = LoadSimulationRange();
-        if (string.IsNullOrWhiteSpace(simStart) || string.IsNullOrWhiteSpace(simEnd))
-        {
-            await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = "Simulation range not available" })}\n\n");
-            await Response.Body.FlushAsync();
-            return;
-        }
+    var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
+    var filePath = Path.Combine(uploadDir, "latest.csv");
+    if (!System.IO.File.Exists(filePath))
+    {
+        await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = "CSV file not found" })}\n\n");
+        await Response.Body.FlushAsync();
+        return;
+    }
 
-        var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
-        var filePath = Path.Combine(uploadDir, "latest.csv");
-        if (!System.IO.File.Exists(filePath))
-        {
-            await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = "CSV file not found" })}\n\n");
-            await Response.Body.FlushAsync();
-            return;
-        }
-
+    try
+    {
         using var reader = new StreamReader(filePath);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
         var records = csv.GetRecords<dynamic>();
+
         int count = 0;
-        const int MAX_ROWS = 30;
+        int matched = 0;
 
         foreach (var record in records)
         {
-            if (count >= MAX_ROWS) break;
+            if (HttpContext.RequestAborted.IsCancellationRequested)
+            {
+                _logger.LogWarning("❌ Client disconnected.");
+                break;
+            }
 
             var dict = record as IDictionary<string, object>;
             if (dict == null) continue;
@@ -84,9 +91,20 @@ public class SimulationController : ControllerBase
             dict.TryGetValue("Timestamp", out var tsObj);
             string timestampStr = tsObj?.ToString() ?? "";
 
-            if (!DateTime.TryParse(timestampStr, out var rowTimestamp)) continue;
+            if (!DateTime.TryParse(timestampStr, out var rowTimestamp))
+            {
+                _logger.LogWarning("⚠️ Could not parse timestamp: {0}", timestampStr);
+                continue;
+            }
 
-            if (rowTimestamp < DateTime.Parse(simStart) || rowTimestamp > DateTime.Parse(simEnd)) continue;
+            var rowDate = rowTimestamp.Date;
+            var simStartDate = DateTime.Parse(simStart).Date;
+            var simEndDate = DateTime.Parse(simEnd).Date;
+
+            if (rowDate < simStartDate || rowDate > simEndDate)
+                continue;
+
+            matched++;
 
             var jsonPayload = JsonSerializer.Serialize(record);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
@@ -110,32 +128,44 @@ public class SimulationController : ControllerBase
                         time = timestampStr,
                         sampleId = idVal ?? $"SAMP-{count + 1}",
                         prediction = roundedPrediction == 1 ? "Pass" : "Fail",
-                        confidence = Math.Round(predictionValue, 4) // Add confidence score (0-1)
+                        confidence = Math.Round(predictionValue, 4),
+                        temperature = 0,
+                        pressure = 0,
+                        humidity = 0
                     };
 
                     string data = JsonSerializer.Serialize(result);
                     await Response.WriteAsync($"data: {data}\n\n");
                     await Response.Body.FlushAsync();
-                    _logger.LogInformation("Sent row: {0}", data);
+
+                    _logger.LogInformation("✅ Sent row [{0}]: {1}", count + 1, data);
 
                     count++;
-                    await Task.Delay(1000);
+                    await Task.Delay(1000); // Simulate real-time streaming
                 }
                 else
                 {
-                    _logger.LogWarning("FastAPI error: {0}", responseBody);
+                    _logger.LogWarning("⚠️ FastAPI error: {0}", responseBody);
                     await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = "ML backend error", detail = responseBody })}\n\n");
                     await Response.Body.FlushAsync();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Row prediction error: {0}", ex.Message);
+                _logger.LogError("❌ Row prediction error: {0}", ex.Message);
                 await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = ex.Message })}\n\n");
                 await Response.Body.FlushAsync();
             }
         }
 
-        _logger.LogInformation("Simulation stream completed");
+        _logger.LogInformation("✅ Simulation stream completed. Matched {0} rows, streamed {1} rows.", matched, count);
     }
+    catch (Exception ex)
+    {
+        _logger.LogError("❌ Simulation error: {0}", ex.Message);
+        await Response.WriteAsync($"data: {JsonSerializer.Serialize(new { error = ex.Message })}\n\n");
+        await Response.Body.FlushAsync();
+    }
+}
+
 }
