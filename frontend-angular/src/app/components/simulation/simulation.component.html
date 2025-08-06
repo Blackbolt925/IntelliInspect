@@ -13,7 +13,7 @@
 
 <p *ngIf="isCompleted" class="success-msg">✔ Simulation completed</p>
 
-<div class="charts-container">
+<div class="charts-container" *ngIf="isBrowser">
   <div class="chart">
     <h4>Quality Score Over Time</h4>
     <canvas baseChart
@@ -33,6 +33,7 @@
   </div>
 </div>
 
+
 <div class="stats-panel">
   <mat-card>Total Predictions: {{ total }}</mat-card>
   <mat-card>Pass Count: {{ passCount }}</mat-card>
@@ -48,9 +49,6 @@
         <th>ID</th>
         <th>Prediction</th>
         <th>Confidence (%)</th>
-        <th>Temperature (°C)</th>
-        <th>Pressure (hPa)</th>
-        <th>Humidity (%)</th>
       </tr>
     </thead>
     <tbody>
@@ -59,9 +57,6 @@
         <td>{{ r.sampleId }}</td>
         <td>{{ r.prediction }}</td>
         <td>{{ r.confidence }}%</td>
-        <td>{{ r.temperature }}</td>
-        <td>{{ r.pressure }}</td>
-        <td>{{ r.humidity }}</td>
       </tr>
     </tbody>
   </table>

@@ -53,12 +53,12 @@ export class TrainModelComponent {
     // };
 
     const payload = {
-      trainStart: '2021-01-01',
-      trainEnd: '2021-01-02',
-      testStart: '2021-01-01',
-      testEnd: '2021-01-02',
-      simulationStart: '2021-01-02',
-      simulationEnd: '2021-01-03'
+      trainStart: '2023-01-01',
+      trainEnd: '2023-01-02',
+      testStart: '2023-01-03',
+      testEnd: '2023-01-04',
+      simulationStart: '2023-01-05',
+      simulationEnd: '2023-01-06'
     };
 
     this.trainService.trainModel(payload).subscribe({
@@ -88,7 +88,7 @@ export class TrainModelComponent {
           ]
         };
 
-        const [[TP, TN], [FP, FN]]  = res.confusion_matrix;
+        const [[TP = 0, TN = 0, FP = 0, FN = 0]] = res.confusion_matrix;
 
         this.doughnutChartData = {
           labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],

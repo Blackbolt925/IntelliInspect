@@ -3,25 +3,28 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SimulationService {
-  private API_URL = 'http://localhost:5229/api/simulate';
+  private API_URL = 'http://localhost:5229/api/simulation/stream';
 
   startSimulation(): Observable<any> {
     return new Observable(observer => {
+      console.log("[Simulation] Connecting to SSE stream...");
       const eventSource = new EventSource(this.API_URL);
 
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log("[Simulation] Received data:", data);
         observer.next(data);
       };
 
       eventSource.onerror = (err) => {
-        console.error('EventSource error:', err);
+        console.error("[Simulation] SSE Error:", err);
         eventSource.close();
         observer.complete();
       };
     });
   }
 }
+
 
 
 
