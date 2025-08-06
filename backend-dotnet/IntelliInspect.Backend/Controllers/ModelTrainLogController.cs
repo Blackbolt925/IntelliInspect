@@ -38,6 +38,19 @@ namespace IntelliInspect.Backend.Controllers
                 return NotFound(new { error = "CSV file not found" });
             }
 
+            // save timestamps to file in UploadedFiles
+            var timestampFilePath = Path.Combine("UploadedFiles", "train_model_timestamps.json");
+            var timestamps = new Dictionary<string, string>
+            {
+                { "trainStart", request.TrainStart ?? "" },
+                { "trainEnd", request.TrainEnd ?? "" },
+                { "testStart", request.TestStart ?? "" },
+                { "testEnd", request.TestEnd ?? "" },
+                { "simulationStart", request.SimulationStart ?? "" },
+                { "simulationEnd", request.SimulationEnd ?? "" }
+            };
+            System.IO.File.WriteAllText(timestampFilePath, System.Text.Json.JsonSerializer.Serialize(timestamps));
+
             using var httpClient = new System.Net.Http.HttpClient();
             using var multipartContent = new System.Net.Http.MultipartFormDataContent();
             multipartContent.Add(new System.Net.Http.StringContent(request.TrainStart ?? ""), "trainStart");
