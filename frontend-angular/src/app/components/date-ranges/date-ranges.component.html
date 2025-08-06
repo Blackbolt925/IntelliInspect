@@ -1,167 +1,168 @@
+<div class="render-container">
+  <div class="date-ranges-container">
+    <app-progress-navbar [currentStep]="1"></app-progress-navbar>
 
-<div class="date-ranges-container">
-  <app-progress-navbar [currentStep]="1"></app-progress-navbar>
-
-  <!-- Date Range Input Cards -->
-  <div class="range-cards">
-    <!-- Training Period Card -->
-    <div class="range-card training-card">
-      <div class="card-header">
-        <div class="icon-wrapper">
-          📅
+    <!-- Date Range Input Cards -->
+    <div class="range-cards">
+      <!-- Training Period Card -->
+      <div class="range-card training-card">
+        <div class="card-header">
+          <div class="icon-wrapper">
+            📅
+          </div>
+          <h4>Training Period</h4>
         </div>
-        <h4>Training Period</h4>
+        <div class="date-inputs">
+          <div class="input-group">
+            <label>Start Date</label>
+            <input
+              type="date"
+              [(ngModel)]="trainStart"
+              [min]="minDate"
+              [max]="maxDate"
+              class="date-input">
+          </div>
+          <div class="input-group">
+            <label>End Date</label>
+            <input
+              type="date"
+              [(ngModel)]="trainEnd"
+              [min]="trainStart || minDate"
+              [max]="maxDate"
+              class="date-input">
+          </div>
+        </div>
       </div>
-      <div class="date-inputs">
-        <div class="input-group">
-          <label>Start Date</label>
-          <input
-            type="date"
-            [(ngModel)]="trainStart"
-            [min]="minDate"
-            [max]="maxDate"
-            class="date-input">
+
+      <!-- Testing Period Card -->
+      <div class="range-card testing-card">
+        <div class="card-header">
+          <div class="icon-wrapper">
+            📅
+          </div>
+          <h4>Testing Period</h4>
         </div>
-        <div class="input-group">
-          <label>End Date</label>
-          <input
-            type="date"
-            [(ngModel)]="trainEnd"
-            [min]="trainStart || minDate"
-            [max]="maxDate"
-            class="date-input">
+        <div class="date-inputs">
+          <div class="input-group">
+            <label>Start Date</label>
+            <input
+              type="date"
+              [(ngModel)]="testStart"
+              [min]="minDate"
+              [max]="maxDate"
+              class="date-input">
+          </div>
+          <div class="input-group">
+            <label>End Date</label>
+            <input
+              type="date"
+              [(ngModel)]="testEnd"
+              [min]="testStart || minDate"
+              [max]="maxDate"
+              class="date-input">
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulation Period Card -->
+      <div class="range-card simulation-card">
+        <div class="card-header">
+          <div class="icon-wrapper">
+            📅
+          </div>
+          <h4>Simulation Period</h4>
+        </div>
+        <div class="date-inputs">
+          <div class="input-group">
+            <label>Start Date</label>
+            <input
+              type="date"
+              [(ngModel)]="simStart"
+              [min]="minDate"
+              [max]="maxDate"
+              class="date-input">
+          </div>
+          <div class="input-group">
+            <label>End Date</label>
+            <input
+              type="date"
+              [(ngModel)]="simEnd"
+              [min]="simStart || minDate"
+              [max]="maxDate"
+              class="date-input">
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Testing Period Card -->
-    <div class="range-card testing-card">
-      <div class="card-header">
-        <div class="icon-wrapper">
-          📅
-        </div>
-        <h4>Testing Period</h4>
-      </div>
-      <div class="date-inputs">
-        <div class="input-group">
-          <label>Start Date</label>
-          <input
-            type="date"
-            [(ngModel)]="testStart"
-            [min]="minDate"
-            [max]="maxDate"
-            class="date-input">
-        </div>
-        <div class="input-group">
-          <label>End Date</label>
-          <input
-            type="date"
-            [(ngModel)]="testEnd"
-            [min]="testStart || minDate"
-            [max]="maxDate"
-            class="date-input">
-        </div>
-      </div>
+    <!-- Validation Success Message -->
+    <div *ngIf="validationSuccess" class="validation-success">
+      <div class="success-icon">✓</div>
+      <span>Date ranges validated successfully!</span>
     </div>
 
-    <!-- Simulation Period Card -->
-    <div class="range-card simulation-card">
-      <div class="card-header">
-        <div class="icon-wrapper">
-          📅
+    <!-- Summary Cards (shown after validation) -->
+    <div *ngIf="validationSuccess && recordCounts" class="summary-cards">
+      <div class="summary-card training-summary">
+        <div class="summary-icon training-icon">
+          <span class="card-number">1</span>
         </div>
-        <h4>Simulation Period</h4>
+        <div class="summary-content">
+          <div class="summary-title">Training Period</div>
+          <div class="summary-days">{{ recordCounts.trainDays }} days</div>
+          <div class="summary-dates">{{ formatDateRange(recordCounts.trainStart, recordCounts.trainEnd) }}</div>
+        </div>
       </div>
-      <div class="date-inputs">
-        <div class="input-group">
-          <label>Start Date</label>
-          <input
-            type="date"
-            [(ngModel)]="simStart"
-            [min]="minDate"
-            [max]="maxDate"
-            class="date-input">
+
+      <div class="summary-card testing-summary">
+        <div class="summary-icon testing-icon">
+          <span class="card-number">2</span>
         </div>
-        <div class="input-group">
-          <label>End Date</label>
-          <input
-            type="date"
-            [(ngModel)]="simEnd"
-            [min]="simStart || minDate"
-            [max]="maxDate"
-            class="date-input">
+        <div class="summary-content">
+          <div class="summary-title">Testing Period</div>
+          <div class="summary-days">{{ recordCounts.testDays }} days</div>
+          <div class="summary-dates">{{ formatDateRange(recordCounts.testStart, recordCounts.testEnd) }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card simulation-summary">
+        <div class="summary-icon simulation-icon">
+          <span class="card-number">3</span>
+        </div>
+        <div class="summary-content">
+          <div class="summary-title">Simulation Period</div>
+          <div class="summary-days">{{ recordCounts.simDays }} days</div>
+          <div class="summary-dates">{{ formatDateRange(recordCounts.simStart, recordCounts.simEnd) }}</div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Validation Success Message -->
-  <div *ngIf="validationSuccess" class="validation-success">
-    <div class="success-icon">✓</div>
-    <span>Date ranges validated successfully!</span>
-  </div>
-
-  <!-- Summary Cards (shown after validation) -->
-  <div *ngIf="validationSuccess && recordCounts" class="summary-cards">
-    <div class="summary-card training-summary">
-      <div class="summary-icon training-icon">
-        <span class="card-number">1</span>
+    <!-- Chart Section -->
+    <div *ngIf="validationSuccess && chartData.length > 0" class="chart-section">
+      <div class="chart-header">
+        <div class="chart-icon">📊</div>
+        <h3>Selected Date Ranges Summary</h3>
       </div>
-      <div class="summary-content">
-        <div class="summary-title">Training Period</div>
-        <div class="summary-days">{{ recordCounts.trainDays }} days</div>
-        <div class="summary-dates">{{ formatDateRange(recordCounts.trainStart, recordCounts.trainEnd) }}</div>
+      <div class="chart-container">
+        <canvas #barChart></canvas>
       </div>
     </div>
 
-    <div class="summary-card testing-summary">
-      <div class="summary-icon testing-icon">
-        <span class="card-number">2</span>
-      </div>
-      <div class="summary-content">
-        <div class="summary-title">Testing Period</div>
-        <div class="summary-days">{{ recordCounts.testDays }} days</div>
-        <div class="summary-dates">{{ formatDateRange(recordCounts.testStart, recordCounts.testEnd) }}</div>
-      </div>
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button
+        class="validate-btn"
+        [disabled]="!canValidate()"
+        (click)="validateRanges()">
+        Validate Ranges
+      </button>
+      <button
+        class="next-btn"
+        [class.enabled]="validationSuccess"
+        [disabled]="!validationSuccess"
+        (click)="next()">
+        Next
+      </button>
     </div>
-
-    <div class="summary-card simulation-summary">
-      <div class="summary-icon simulation-icon">
-        <span class="card-number">3</span>
-      </div>
-      <div class="summary-content">
-        <div class="summary-title">Simulation Period</div>
-        <div class="summary-days">{{ recordCounts.simDays }} days</div>
-        <div class="summary-dates">{{ formatDateRange(recordCounts.simStart, recordCounts.simEnd) }}</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Chart Section -->
-  <div *ngIf="validationSuccess && chartData.length > 0" class="chart-section">
-    <div class="chart-header">
-      <div class="chart-icon">📊</div>
-      <h3>Selected Date Ranges Summary</h3>
-    </div>
-    <div class="chart-container">
-      <canvas #barChart></canvas>
-    </div>
-  </div>
-
-  <!-- Action Buttons -->
-  <div class="action-buttons">
-    <button
-      class="validate-btn"
-      [disabled]="!canValidate()"
-      (click)="validateRanges()">
-      Validate Ranges
-    </button>
-    <button
-      class="next-btn"
-      [class.enabled]="validationSuccess"
-      [disabled]="!validationSuccess"
-      (click)="next()">
-      Next
-    </button>
   </div>
 </div>

@@ -1,122 +1,136 @@
-/* Overall container styling */
 :host {
   display: block;
-  padding: 20px;
-  background: #f8fafc; /* light background */
-  border-radius: 12px;
+  // max-width: 1200px;
+  margin: 0 auto;
+  padding: 0rem;
+  background: #f8fafc;
+  border-radius: 16px;
+  font-family: 'Roboto', sans-serif;
 }
 
-/* Stepper style adjustments (if using Angular Material stepper) */
+.render-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #ffffff; /* White background for contrast */
+  border-radius: 16px;
+  
+  /* Soft shadow */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.11);
+
+  /* Optional: Slight border for definition */
+  border: 1px solid rgba(0, 0, 0, 0.09);}
+
+
+/* Progress Step Navbar */
 ::ng-deep .mat-horizontal-stepper-header-container {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-/* Upload area */
+/* Upload Box Area */
 .upload-area {
-  border: 2px dashed #cbd5e1; /* light gray-blue border */
+  border: 2px dashed #cbd5e1;
   background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 30px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.3s ease, background 0.3s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    border-color: #4f46e5; /* indigo highlight */
-    background: #f0f4ff; /* light indigo tint */
+    border-color: #4f46e5;
+    background: #f0f4ff;
   }
 
   &.disabled {
     opacity: 0.6;
     pointer-events: none;
     background: #f1f5f9;
-    cursor: not-allowed;
   }
 
   p {
     color: #64748b;
-    font-size: 0.95rem;
-    margin-bottom: 12px;
+    font-size: 1rem;
+    margin-bottom: 16px;
   }
 
   button {
-    margin-top: 8px;
+    margin-top: 10px;
+    font-weight: 600;
+    border-radius: 8px;
   }
 }
 
-/* File preview area */
-.file-preview {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #ecfdf5; /* light green background */
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-top: 15px;
-  border: 1px solid #a7f3d0; /* light green border */
-
-  mat-icon {
-    color: #059669; /* green icon */
-  }
-
-  strong {
-    color: #2563eb; /* blue file name */
-  }
-
-  button {
-    margin-left: auto;
-  }
-}
-
-/* Metadata summary cards */
-.meta-summary {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-
-  .card {
-    flex: 1;
-    min-width: 150px;
-    text-align: center;
-    padding: 15px;
-    border-radius: 10px;
-    background: #f0fdf4; /* very light green */
-    border: 1px solid #bbf7d0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-
-    font-size: 0.9rem;
-    font-weight: 500;
-
-    strong {
-      display: block;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #0f172a; /* near black */
-    }
-  }
-}
-
-/* Error message */
-.error {
-  color: #dc2626; /* red */
-  margin-top: 15px;
+/* Progress label */
+.progress-label {
+  text-align: center;
+  margin-top: 8px;
   font-size: 0.9rem;
   font-weight: 500;
+  color: #334155;
 }
 
-/* Next button styling */
+/* Meta summary cards */
+/* Wrapper to center metadata + next button */
+.meta-summary-wrapper {
+  max-width: 900px;       /* Restrict total width */
+  margin: 0 auto;         /* Center horizontally */
+  text-align: center;     /* Center inline content */
+
+  /* Space between cards and button */
+  padding-top: 30px;
+}
+
+/* Metadata cards container */
+.meta-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  justify-content: center;  /* Center grid content horizontally */
+  margin-bottom: 20px;
+}
+
+/* Cards styling remains the same */
+.meta-summary .card {
+  width: 200px;         /* fixed width */
+  height: 150px;        /* fixed height */
+  margin: 0 auto;       /* center cards */
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s;
+
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+
+  display: flex;              /* to center content vertically */
+  flex-direction: column;
+  justify-content: center;
+
+  strong {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1d4ed8;
+    margin-top: 6px;
+  }
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* Next button centered below metadata */
 .next-btn {
-  margin-top: 25px;
-  float: right;
-  background-color: #4f46e5 !important; /* indigo */
+  display: inline-block;
+  margin: 0 auto;
+  background-color: #4f46e5 !important;
   color: white !important;
-  padding: 8px 20px;
-  border-radius: 8px;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 600;
 }

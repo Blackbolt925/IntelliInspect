@@ -1,7 +1,21 @@
-.date-ranges-container {
+.render-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background: #ffffff; /* White background for contrast */
+  border-radius: 16px;
+  
+  /* Soft shadow */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.11);
+
+  /* Optional: Slight border for definition */
+  border: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.date-ranges-container {
+  // max-width: 1200px;
+  margin: 0 auto;
+  padding: 0rem;
 
   h2 {
     font-size: 2rem;

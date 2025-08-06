@@ -1,63 +1,62 @@
-<app-stepper [activeStep]="4"></app-stepper>
-
-<h2>Real-Time Prediction Simulation</h2>
-
-<div class="simulation-actions">
-  <button mat-raised-button color="primary" *ngIf="!isRunning && !isCompleted" (click)="startSimulation()">
-    Start Simulation
-  </button>
-  <button mat-stroked-button color="accent" *ngIf="isCompleted" (click)="restart()">
-    Restart Simulation
-  </button>
-</div>
-
-<p *ngIf="isCompleted" class="success-msg">✔ Simulation completed</p>
-
-<div class="charts-container" *ngIf="isBrowser">
-  <div class="chart">
-    <h4>Quality Score Over Time</h4>
-    <canvas baseChart
-      [data]="lineChartData"
-      [options]="lineChartOptions"
-      [type]="'line'">
-    </canvas>
+<div class="render-container">
+  <app-progress-navbar [currentStep]="3"></app-progress-navbar>
+  <div class="simulation-actions">
+    <button mat-raised-button color="primary" *ngIf="!isRunning && !isCompleted" (click)="startSimulation()">
+      Start Simulation
+    </button>
+    <button mat-stroked-button color="accent" *ngIf="isCompleted" (click)="restart()">
+      Restart Simulation
+    </button>
   </div>
 
-  <div class="chart">
-    <h4>Prediction Confidence Distribution</h4>
-    <canvas baseChart
-      [data]="donutChartData"
-      [options]="donutChartOptions"
-      [type]="'pie'">
-    </canvas>
+  <p *ngIf="isCompleted" class="success-msg">✔ Simulation completed</p>
+
+  <div class="charts-container" *ngIf="isBrowser">
+    <div class="chart">
+      <h4>Quality Score Over Time</h4>
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        [type]="'line'">
+      </canvas>
+    </div>
+
+    <div class="chart">
+      <h4>Prediction Confidence Distribution</h4>
+      <canvas baseChart
+        [data]="donutChartData"
+        [options]="donutChartOptions"
+        [type]="'pie'">
+      </canvas>
+    </div>
   </div>
-</div>
 
 
-<div class="stats-panel">
-  <mat-card>Total Predictions: {{ total }}</mat-card>
-  <mat-card>Pass Count: {{ passCount }}</mat-card>
-  <mat-card>Fail Count: {{ failCount }}</mat-card>
-  <mat-card>Avg Confidence: {{ avgConfidence | number: '1.0-2' }}%</mat-card>
-</div>
+  <div class="stats-panel">
+    <mat-card>Total Predictions: {{ total }}</mat-card>
+    <mat-card>Pass Count: {{ passCount }}</mat-card>
+    <mat-card>Fail Count: {{ failCount }}</mat-card>
+    <mat-card>Avg Confidence: {{ avgConfidence | number: '1.0-2' }}%</mat-card>
+  </div>
 
-<div class="table-wrapper" *ngIf="records.length > 0">
-  <table>
-    <thead>
-      <tr>
-        <th>Time</th>
-        <th>ID</th>
-        <th>Prediction</th>
-        <th>Confidence (%)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let r of records">
-        <td>{{ r.time }}</td>
-        <td>{{ r.sampleId }}</td>
-        <td>{{ r.prediction }}</td>
-        <td>{{ r.confidence }}%</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrapper" *ngIf="records.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>ID</th>
+          <th>Prediction</th>
+          <th>Confidence (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of records">
+          <td>{{ r.time }}</td>
+          <td>{{ r.sampleId }}</td>
+          <td>{{ r.prediction }}</td>
+          <td>{{ r.confidence }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

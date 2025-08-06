@@ -14,14 +14,36 @@ export class TrainModelComponent {
   trained = false;
   metrics: any = null;
   statusMsg = '';
+  isError = false;
 
   lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
     datasets: []
   };
+
   lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
-    plugins: { legend: { position: 'top' } }
+    plugins: { 
+      legend: { position: 'top' },
+      title: {
+        display: true,
+        text: 'XGBoost Training Performance'
+      }
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Boosting Round'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Accuracy / Loss'
+        }
+      }
+    }
   };
 
   doughnutChartData: ChartConfiguration<'doughnut'>['data'] = {
@@ -31,9 +53,16 @@ export class TrainModelComponent {
 
   doughnutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
-    cutout: '60%', // controls the donut hole size (50-70% is common)
+    cutout: '60%',
+    layout: {
+      padding: 60 // adds padding around the chart so it appears smaller
+    },
     plugins: {
-      legend: { position: 'top' }
+      legend: { position: 'top' },
+      title: {
+        display: true,
+        text: 'Confusion Matrix'
+      }
     }
   };
 
@@ -42,6 +71,7 @@ export class TrainModelComponent {
   trainModel(): void {
     this.training = true;
     this.statusMsg = 'Training in progress...';
+    this.isError = false;
 
     // const dateRangesString = localStorage.getItem('dateRanges');
     // const dateRanges = dateRangesString ? JSON.parse(dateRangesString) : {};
@@ -56,12 +86,12 @@ export class TrainModelComponent {
     // };
 
     const payload = {
-      trainStart: '2021-01-01',
-      trainEnd: '2021-01-01',
-      testStart: '2021-01-02',
-      testEnd: '2021-01-02',
-      simulationStart: '2021-01-03',
-      simulationEnd: '2021-01-03'
+      trainStart: '2023-01-01',
+      trainEnd: '2023-01-02',
+      testStart: '2023-01-03',
+      testEnd: '2023-01-04',
+      simulationStart: '2023-01-05',
+      simulationEnd: '2023-01-06'
     };
 
     this.trainService.trainModel(payload).subscribe({
@@ -69,9 +99,10 @@ export class TrainModelComponent {
         this.metrics = res;
         this.trained = true;
         this.training = false;
-        this.statusMsg = '✔ Model Trained Successfully';
+        this.statusMsg = 'Model Trained Successfully';
 
-        const labels = res.train_accuracy.map((_: any, i: number) => `Epoch ${i + 1}`);
+        // X-axis will only show 1, 2, 3... instead of "Boosting Round 1"
+        const labels = res.train_accuracy.map((_: any, i: number) => i + 1);
 
         this.lineChartData = {
           labels,
@@ -79,18 +110,17 @@ export class TrainModelComponent {
             {
               label: 'Training Accuracy',
               data: res.train_accuracy,
-              borderColor: 'green',
               fill: false
             },
             {
               label: 'Training Loss',
               data: res.train_loss,
-              borderColor: 'red',
               fill: false
             }
           ]
         };
 
+        // Confusion Matrix values
         const [[TP = 0, TN = 0, FP = 0, FN = 0]] = res.confusion_matrix;
 
         this.doughnutChartData = {
@@ -102,11 +132,11 @@ export class TrainModelComponent {
             }
           ]
         };
-
       },
       error: () => {
         this.statusMsg = 'Training failed.';
         this.training = false;
+        this.isError = true;
       }
     });
   }

@@ -8,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'IntelliInspect';
+
+  toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+  }
 }

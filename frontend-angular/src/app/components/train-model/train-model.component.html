@@ -1,40 +1,40 @@
-<app-stepper [activeStep]="3"></app-stepper>
+<div class="render-container">
+  <app-progress-navbar [currentStep]="2"></app-progress-navbar>
 
-<h2>Model Training & Evaluation</h2>
-
-<div class="center-box">
-  <button mat-raised-button color="primary" (click)="trainModel()" [disabled]="training || trained">
-    Train Model
-  </button>
-  <p *ngIf="statusMsg" class="status">{{ statusMsg }}</p>
-</div>
-
-<div *ngIf="trained && metrics" class="metrics-cards">
-  <mat-card class="metric">Accuracy<br><strong>{{ metrics.accuracy }}%</strong></mat-card>
-  <mat-card class="metric">Precision<br><strong>{{ metrics.precision }}%</strong></mat-card>
-  <mat-card class="metric">Recall<br><strong>{{ metrics.recall }}%</strong></mat-card>
-  <mat-card class="metric">F1-Score<br><strong>{{ metrics.f1_score }}%</strong></mat-card>
-  <mat-card class="metric">MCC<br><strong>{{ metrics.mcc }}</strong></mat-card>
-</div>
-
-<div class="charts-container" *ngIf="trained">
-  <div class="chart">
-    <canvas baseChart
-      [data]="lineChartData"
-      [options]="lineChartOptions"
-      [type]="'line'">
-    </canvas>
+  <div class="center-box">
+    <button mat-raised-button color="primary" (click)="trainModel()" [disabled]="training || trained">
+      Train Model
+    </button>
+    <p *ngIf="statusMsg" class="status" [class.error]="isError" [class.success]="trained && !isError" >{{ statusMsg }}</p>
   </div>
 
-  <div class="chart">
-    <canvas baseChart
-      [data]="doughnutChartData"
-      [options]="doughnutChartOptions"
-      [type]="'doughnut'">
-    </canvas>
+  <div *ngIf="trained && metrics" class="metrics-cards">
+    <mat-card class="metric">Accuracy<br><strong>{{ metrics.accuracy }}%</strong></mat-card>
+    <mat-card class="metric">Precision<br><strong>{{ metrics.precision }}%</strong></mat-card>
+    <mat-card class="metric">Recall<br><strong>{{ metrics.recall }}%</strong></mat-card>
+    <mat-card class="metric">F1-Score<br><strong>{{ metrics.f1_score }}%</strong></mat-card>
+    <mat-card class="metric">MCC<br><strong>{{ metrics.mcc }}</strong></mat-card>
   </div>
-</div>
 
-<div class="next-action">
-  <button mat-raised-button color="accent" (click)="next()">Next</button>
+  <div class="charts-container" *ngIf="trained">
+    <div class="chart">
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        [type]="'line'">
+      </canvas>
+    </div>
+
+    <div class="chart">
+      <canvas baseChart
+        [data]="doughnutChartData"
+        [options]="doughnutChartOptions"
+        [type]="'doughnut'">
+      </canvas>
+    </div>
+  </div>
+
+  <div class="next-action" *ngIf="trained">
+    <button mat-raised-button color="accent" (click)="next()">Next</button>
+  </div>
 </div>

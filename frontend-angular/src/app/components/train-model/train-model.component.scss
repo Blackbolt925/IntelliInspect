@@ -1,3 +1,18 @@
+.render-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #ffffff; /* White background for contrast */
+  border-radius: 16px;
+  
+  /* Soft shadow */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.11);
+
+  /* Optional: Slight border for definition */
+  border: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+
 .center-box {
   text-align: center;
   margin: 20px 0;
@@ -6,6 +21,12 @@
     margin-top: 10px;
     font-weight: bold;
     color: #555;
+    &.error {
+      color: #dc2626; /* Red for errors */
+    }
+    &.success {
+      color: green;
+    }
   }
 }
 

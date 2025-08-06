@@ -60,6 +60,10 @@ export class SimulationComponent {
 
   donutChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
+    cutout: '60%',
+    layout: {
+      padding: 60 // adds padding around the chart so it appears smaller
+    },
     plugins: { legend: { position: 'bottom' } }
   };
 

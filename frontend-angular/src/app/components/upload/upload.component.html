@@ -1,31 +1,37 @@
-<!-- Show upload UI only when there's no metadata yet -->
-<div *ngIf="!metadata">
-  <app-progress-navbar [currentStep]="0"></app-progress-navbar>
+<div class="render-container">
+  <!-- Show upload UI only when there's no metadata yet -->
+  <div *ngIf="!metadata">
+    <app-progress-navbar [currentStep]="0"></app-progress-navbar>
 
-  <mat-progress-bar *ngIf="isUploading" mode="determinate" color="primary" [value]="progress"></mat-progress-bar>
-  <div *ngIf="isUploading && progress > 0" class="progress-label">{{progress}}%</div>
+    <mat-progress-bar *ngIf="isUploading" mode="determinate" color="primary" [value]="progress"></mat-progress-bar>
+    <div *ngIf="isUploading && progress > 0" class="progress-label">{{progress}}%</div>
 
-  <div class="upload-area" [class.disabled]="isUploading"
-       (drop)="!isUploading && onDrop($event)"
-       (dragover)="onDragOver($event)">
-    <p>Click to select a CSV file or drag and drop</p>
-    <input type="file" accept=".csv" (change)="onFileSelected($event)" hidden #fileInput [disabled]="isUploading" />
-    <button mat-raised-button color="primary" (click)="fileInput.click()" [disabled]="isUploading">Choose File</button>
+    <div class="upload-area" [class.disabled]="isUploading"
+        (drop)="!isUploading && onDrop($event)"
+        (dragover)="onDragOver($event)">
+      <p>Click to select a CSV file or drag and drop</p>
+      <input type="file" accept=".csv" (change)="onFileSelected($event)" hidden #fileInput [disabled]="isUploading" />
+      <button mat-raised-button color="primary" (click)="fileInput.click()" [disabled]="isUploading">Choose File</button>
+    </div>
   </div>
+
+  <!-- Show metadata only when available -->
+  <div *ngIf="metadata">
+    <app-progress-navbar [currentStep]="0"></app-progress-navbar>
+    <div class="meta-summary-wrapper">
+    <div class="meta-summary">
+      <mat-card class="card">Records <br /><strong>{{ metadata.totalRows }}</strong></mat-card>
+      <mat-card class="card">Columns <br /><strong>{{ metadata.totalCols }}</strong></mat-card>
+      <mat-card class="card">Pass Rate <br /><strong>{{ (metadata.percentResponseEqualsOne * 100) | number:'1.0-0' }}%</strong></mat-card>
+      <mat-card class="card">Date Range <br />
+        <strong>{{ metadata.startTimestamp }}</strong> to <strong>{{ metadata.endTimestamp }}</strong>
+      </mat-card>
+    </div>
+    <div class="next-btn-container">
+      <button mat-raised-button color="accent" class="next-btn" (click)="proceed()">Next</button>
+    </div>
+  </div>
+
+  <!-- Show error if any -->
+  <div *ngIf="error" class="error">{{ error }}</div>
 </div>
-
-<!-- Show metadata only when available -->
-<div *ngIf="metadata" class="meta-summary">
-  <app-progress-navbar [currentStep]="0"></app-progress-navbar>
-  <mat-card class="card">Records <br /><strong>{{ metadata.totalRows }}</strong></mat-card>
-  <mat-card class="card">Columns <br /><strong>{{ metadata.totalCols }}</strong></mat-card>
-  <mat-card class="card">Pass Rate <br /><strong>{{ metadata.percentResponseEqualsOne }}%</strong></mat-card>
-  <mat-card class="card">Date Range <br />
-    <strong>{{ metadata.startTimestamp }}</strong> to <strong>{{ metadata.endTimestamp }}</strong>
-  </mat-card>
-
-  <button mat-raised-button color="accent" class="next-btn" (click)="proceed()">Next</button>
-</div>
-
-<!-- Show error if any -->
-<div *ngIf="error" class="error">{{ error }}</div>
