@@ -1,0 +1,34 @@
+#version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend-dotnet
+    ports:
+      - "5229:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./backend-dotnet:/src
+
+  frontend:
+    build:
+      context: ./frontend-angular
+      target: build
+    working_dir: /app
+    command: ["npm", "start"]
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend-angular:/app
+    depends_on:
+      - backend
+
+  ml-fastapi:
+    build:
+      context: ./ml-service-fastapi
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-service-fastapi:/app

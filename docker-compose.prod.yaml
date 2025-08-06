@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend-dotnet
+    ports:
+      - "5229:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+  frontend:
+    build:
+      context: ./frontend-angular
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  ml-fastapi:
+    build:
+      context: ./ml-service-fastapi
+    ports:
+      - "8000:8000"
