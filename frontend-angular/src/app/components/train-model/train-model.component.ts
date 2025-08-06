@@ -24,13 +24,17 @@ export class TrainModelComponent {
     plugins: { legend: { position: 'top' } }
   };
 
-  pieChartData: ChartConfiguration<'pie'>['data'] = {
+  doughnutChartData: ChartConfiguration<'doughnut'>['data'] = {
     labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],
     datasets: []
   };
-  pieChartOptions: ChartConfiguration<'pie'>['options'] = {
+
+  doughnutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
-    plugins: { legend: { position: 'top' } }
+    cutout: '60%', // controls the donut hole size (50-70% is common)
+    plugins: {
+      legend: { position: 'top' }
+    }
   };
 
   constructor(private trainService: TrainService, private router: Router) {}
@@ -44,16 +48,17 @@ export class TrainModelComponent {
     //   trainEnd: localStorage.getItem('trainEnd'),
     //   testStart: localStorage.getItem('testStart'),
     //   testEnd: localStorage.getItem('testEnd'),
-
+    //   simulationStart: localStorage.getItem('simulationStart'),
+    //   simulationEnd: localStorage.getItem('simulationEnd')
     // };
 
     const payload = {
-      trainStart: '2023-01-01',
-      trainEnd: '2023-01-02',
-      testStart: '2023-01-03',
-      testEnd: '2023-01-04',
-      simulationStart: '2023-01-05',
-      simulationEnd: '2023-01-06'
+      trainStart: '2021-01-01',
+      trainEnd: '2021-01-02',
+      testStart: '2021-01-01',
+      testEnd: '2021-01-02',
+      simulationStart: '2021-01-02',
+      simulationEnd: '2021-01-03'
     };
 
     this.trainService.trainModel(payload).subscribe({
@@ -85,7 +90,7 @@ export class TrainModelComponent {
 
         const { TP, TN, FP, FN } = res.confusionMatrix;
 
-        this.pieChartData = {
+        this.doughnutChartData = {
           labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],
           datasets: [
             {
@@ -94,6 +99,7 @@ export class TrainModelComponent {
             }
           ]
         };
+
       },
       error: () => {
         this.statusMsg = 'Training failed.';

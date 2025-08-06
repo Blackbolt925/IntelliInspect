@@ -13,46 +13,56 @@
 
 <p *ngIf="isCompleted" class="success-msg">✔ Simulation completed</p>
 
-<div class="charts">
-  <mat-card>
+<div class="charts-container">
+  <div class="chart">
     <h4>Quality Score Over Time</h4>
-    <p>[Line Chart Placeholder]</p>
-  </mat-card>
+    <canvas baseChart
+      [data]="lineChartData"
+      [options]="lineChartOptions"
+      [type]="'line'">
+    </canvas>
+  </div>
 
-  <mat-card>
-    <h4>Prediction Confidence</h4>
-    <p>[Donut Chart Placeholder]</p>
-  </mat-card>
+  <div class="chart">
+    <h4>Prediction Confidence Distribution</h4>
+    <canvas baseChart
+      [data]="donutChartData"
+      [options]="donutChartOptions"
+      [type]="'pie'">
+    </canvas>
+  </div>
 </div>
 
 <div class="stats-panel">
-  <mat-card>Total: {{ total }}</mat-card>
-  <mat-card>Pass: {{ passCount }}</mat-card>
-  <mat-card>Fail: {{ failCount }}</mat-card>
-  <mat-card>Avg Confidence: {{ avgConfidence | number:'1.0-2' }}%</mat-card>
+  <mat-card>Total Predictions: {{ total }}</mat-card>
+  <mat-card>Pass Count: {{ passCount }}</mat-card>
+  <mat-card>Fail Count: {{ failCount }}</mat-card>
+  <mat-card>Avg Confidence: {{ avgConfidence | number: '1.0-2' }}%</mat-card>
 </div>
 
-<table *ngIf="records.length > 0">
-  <thead>
-    <tr>
-      <th>Time</th>
-      <th>ID</th>
-      <th>Prediction</th>
-      <th>Confidence</th>
-      <th>Temperature (°C)</th>
-      <th>Pressure (hPa)</th>
-      <th>Humidity (%)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let r of records">
-      <td>{{ r.time }}</td>
-      <td>{{ r.sampleId }}</td>
-      <td>{{ r.prediction }}</td>
-      <td>{{ r.confidence }}%</td>
-      <td>{{ r.temperature }}</td>
-      <td>{{ r.pressure }}</td>
-      <td>{{ r.humidity }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-wrapper" *ngIf="records.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>ID</th>
+        <th>Prediction</th>
+        <th>Confidence (%)</th>
+        <th>Temperature (°C)</th>
+        <th>Pressure (hPa)</th>
+        <th>Humidity (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of records">
+        <td>{{ r.time }}</td>
+        <td>{{ r.sampleId }}</td>
+        <td>{{ r.prediction }}</td>
+        <td>{{ r.confidence }}%</td>
+        <td>{{ r.temperature }}</td>
+        <td>{{ r.pressure }}</td>
+        <td>{{ r.humidity }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

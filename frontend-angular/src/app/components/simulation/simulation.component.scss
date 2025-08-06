@@ -1,48 +1,79 @@
 .simulation-actions {
-  margin-bottom: 20px;
   text-align: center;
+  margin: 24px 0;
 }
 
 .success-msg {
-  color: green;
-  font-weight: bold;
   text-align: center;
-  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #10b981;
+  margin-bottom: 20px;
 }
 
-.charts {
+.charts-container {
   display: flex;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  margin: 32px 0;
 
-  mat-card {
-    flex: 1;
-    text-align: center;
-    padding: 1rem;
+  .chart {
+    width: 100%;
+    max-width: 640px;
+    background: #fff;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+
+    h4 {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
   }
 }
 
 .stats-panel {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
 
   mat-card {
-    flex: 1;
-    padding: 1rem;
-    text-align: center;
-    background: #f5f5f5;
+    padding: 12px 20px;
+    font-weight: 500;
+    border-radius: 10px;
+    background-color: #f3f4f6;
   }
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 24px;
 
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: center;
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    thead {
+      background-color: #f9fafb;
+      font-weight: bold;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f6f6f6;
+    }
+  }
 }
