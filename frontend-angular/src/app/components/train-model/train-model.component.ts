@@ -68,27 +68,27 @@ export class TrainModelComponent {
         this.training = false;
         this.statusMsg = '✔ Model Trained Successfully';
 
-        const labels = res.trainAccuracy.map((_: any, i: number) => `Epoch ${i + 1}`);
+        const labels = res.train_accuracy.map((_: any, i: number) => `Epoch ${i + 1}`);
 
         this.lineChartData = {
           labels,
           datasets: [
             {
               label: 'Training Accuracy',
-              data: res.trainAccuracy,
+              data: res.train_accuracy,
               borderColor: 'green',
               fill: false
             },
             {
               label: 'Training Loss',
-              data: res.trainLoss,
+              data: res.train_loss,
               borderColor: 'red',
               fill: false
             }
           ]
         };
 
-        const { TP, TN, FP, FN } = res.confusionMatrix;
+        const [[TP, TN], [FP, FN]]  = res.confusion_matrix;
 
         this.doughnutChartData = {
           labels: ['True Positive', 'True Negative', 'False Positive', 'False Negative'],

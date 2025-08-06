@@ -49,6 +49,7 @@ async def train_model(
                 return {k: sanitize(v) for k, v in value.items()}
             return value
         return sanitize(metrics)
+        print(metrics)
 
     return JSONResponse(clean_metrics(metrics))
 
