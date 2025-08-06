@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 interface DateConstraints {
   minDate: string;
@@ -40,20 +42,33 @@ interface DateRangePayload {
 export class DateRangeService {
   private baseUrl = 'http://localhost:5229/api/DateRange';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
-  // Get min/max date constraints from backend
+  // Prevents SSR from making the call
   getDateConstraints(): Observable<DateConstraints> {
-    return this.http.get<DateConstraints>(`${this.baseUrl}/constraints`);
+    if (isPlatformBrowser(this.platformId)) {
+      return this.http.get<DateConstraints>(`${this.baseUrl}/constraints`);
+    } else {
+      return of({ minDate: '', maxDate: '' }); // return empty or dummy values
+    }
   }
 
-  // Validate date ranges and get chart data
   validateDateRanges(payload: DateRangePayload): Observable<ValidationResponse> {
-    return this.http.post<ValidationResponse>(`${this.baseUrl}/validate`, payload);
+    if (isPlatformBrowser(this.platformId)) {
+      return this.http.post<ValidationResponse>(`${this.baseUrl}/validate`, payload);
+    } else {
+      return of({ status: 'invalid', message: 'SSR mode: skipping API call' });
+    }
   }
 
-  // Submit final date ranges selection
   submitDateRanges(payload: DateRangePayload): Observable<any> {
-    return this.http.post(`${this.baseUrl}/submit`, payload);
+    if (isPlatformBrowser(this.platformId)) {
+      return this.http.post(`${this.baseUrl}/submit`, payload);
+    } else {
+      return of({}); // or some fallback
+    }
   }
 }
