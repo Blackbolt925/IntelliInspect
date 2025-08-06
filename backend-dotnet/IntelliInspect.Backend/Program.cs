@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS for Angular frontend
+// CORS for Angular
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -19,34 +19,31 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Add HTTP client for ML service communication
-builder.Services.AddHttpClient("MLService", client =>
-{
-    client.BaseAddress = new Uri("http://localhost:8000/"); // ML service URL
-});
+// HTTP client for FastAPI
+builder.Services.AddHttpClient();
 
+// Large file upload support
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 14L * 1024 * 1024 * 1024; // 14 GB, adjust as needed
+    options.MultipartBodyLengthLimit = 14L * 1024 * 1024 * 1024;
 });
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 14L * 1024 * 1024 * 1024; // 14 GB
+    serverOptions.Limits.MaxRequestBodySize = 14L * 1024 * 1024 * 1024;
 });
-// Register DatasetService
-builder.Services.AddScoped<DatasetService>();
+
 var app = builder.Build();
 
-// Configure pipeline
+// Dev tools
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Middleware
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
