@@ -33,6 +33,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.Limits.MaxRequestBodySize = 14L * 1024 * 1024 * 1024; // 14 GB
 });
+// Register DatasetService
+builder.Services.AddScoped<DatasetService>();
 var app = builder.Build();
 
 // Configure pipeline

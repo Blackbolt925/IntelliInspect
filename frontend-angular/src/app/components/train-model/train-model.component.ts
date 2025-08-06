@@ -39,11 +39,21 @@ export class TrainModelComponent {
     this.training = true;
     this.statusMsg = 'Training in progress...';
 
+    // const payload = {
+    //   trainStart: localStorage.getItem('trainStart'),
+    //   trainEnd: localStorage.getItem('trainEnd'),
+    //   testStart: localStorage.getItem('testStart'),
+    //   testEnd: localStorage.getItem('testEnd'),
+
+    // };
+
     const payload = {
-      trainStart: localStorage.getItem('trainStart'),
-      trainEnd: localStorage.getItem('trainEnd'),
-      testStart: localStorage.getItem('testStart'),
-      testEnd: localStorage.getItem('testEnd')
+      trainStart: '2023-01-01',
+      trainEnd: '2023-01-02',
+      testStart: '2023-01-03',
+      testEnd: '2023-01-04',
+      simulationStart: '2023-01-05',
+      simulationEnd: '2023-01-06'
     };
 
     this.trainService.trainModel(payload).subscribe({
