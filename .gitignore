@@ -41,6 +41,8 @@ logs/
 
 # Uploaded files
 backend-dotnet/IntelliInspect.Backend/UploadedFiles/
+backend-dotnet/IntelliInspect.Backend/UploadedFiles/latest.csv
+backend-dotnet/IntelliInspect.Backend/UploadedFiles/*.csv
 
 # OS
 .DS_Store

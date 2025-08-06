@@ -54,9 +54,9 @@ public class UploadController : ControllerBase
 
             // Create final column names list (original + Timestamp)
             columnNames = new List<string>(originalColumnNames);
-            columnNames.Add("Timestamp");
             totalCols = columnNames.Count; // This now includes the timestamp column
-
+            columnNames.Add("Timestamp");
+            
             var processedRows = new List<Dictionary<string, string>>();
             string? line;
             int i = 0;
