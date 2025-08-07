@@ -57,11 +57,11 @@ http://localhost:8080
 
 ### Port Mapping
 
-| Service   | Container Name | Container Port | Host Port | URL                   | Description            |
-|-----------|----------------|----------------|-----------|------------------------|-------------------------|
-| Frontend  | angular-ui     | 80             | 8080      | http://localhost:8080 | Angular UI Frontend     |
-| Backend   | dotnet-backend | 8080           | 5229      | http://localhost:5229 | .NET Core API Backend   |
-| ML API    | fastapi-ml     | 8000           | 8000      | http://localhost:8000 | FastAPI ML Model Server |
+| Service   | Container Name | Container Port | Host Port | Description            |
+|-----------|----------------|----------------|-----------|-------------------------|
+| Frontend  | angular-ui     | 80             | 8080      | Angular UI Frontend     |
+| Backend   | dotnet-backend | 8080           | 5229      | .NET Core API Backend   |
+| ML API    | fastapi-ml     | 8000           | 8000      | FastAPI ML Model Server |
 
 ### Stopping the Application
 To stop all services:
