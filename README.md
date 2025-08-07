@@ -79,6 +79,7 @@ docker compose down
 
 
 ## Usage Guide
+Download the datasets here: [Small Dataset](https://drive.google.com/file/d/1Br1MLtz7N1O764t8H54rnaglINmOK6Vs/view?usp=sharing) and [Large Dataset](https://drive.google.com/file/d/1fjeqduFZ8k9NFllYD1CuQ__f9s-O2NUt/view?usp=sharing)
 The usage guide will be page-by-page, ensuring the user can follow along easily
 ### Page 1: Upload file
 - The first screen has an interface where the user must upload a CSV file. This is the dataset that will be used.
