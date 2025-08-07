@@ -7,25 +7,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<DatasetService>();
 
-// CORS for Angular
+// Configure CORS for Angular dev client
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins("http://localhost:8080")  // Angular dev server
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
-// HTTP client for FastAPI
+// Add HttpClient for FastAPI integration
 builder.Services.AddHttpClient();
 
-// Large file upload support
+// Configure large file upload (up to 14 GB)
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 14L * 1024 * 1024 * 1024;
+    options.MultipartBodyLengthLimit = 14L * 1024 * 1024 * 1024; // 14 GB
 });
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -34,16 +35,20 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 var app = builder.Build();
 
-// Dev tools
+// Swagger in development only
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Middleware
+// Configure middleware pipeline
 app.UseHttpsRedirection();
-app.UseCors("AllowAngular");
+
+app.UseCors("AllowAngular"); // Enable CORS before controllers
+
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();

@@ -111,7 +111,7 @@ public async Task StreamSimulation()
 
             try
             {
-                var fastApiUrl = "http://localhost:8000/simulate-row";
+                var fastApiUrl = "http://fastapi-ml:8000/simulate-row";
                 var response = await _httpClient.PostAsync(fastApiUrl, content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -127,8 +127,8 @@ public async Task StreamSimulation()
                     {
                         time = timestampStr,
                         sampleId = idVal ?? $"SAMP-{count + 1}",
-                        prediction = roundedPrediction == 1 ? "Pass" : "Fail",
-                        confidence = Math.Round(predictionValue, 4),
+                        prediction = roundedPrediction == 1 ? "Fail" : "Pass",
+                        confidence = roundedPrediction == 1 ?  100 - Math.Round(predictionValue, 4)*100 : Math.Round(predictionValue, 4)*100,
                         temperature = 0,
                         pressure = 0,
                         humidity = 0

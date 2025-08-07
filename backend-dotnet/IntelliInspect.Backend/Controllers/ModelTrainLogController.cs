@@ -63,7 +63,7 @@ namespace IntelliInspect.Backend.Controllers
             multipartContent.Add(new System.Net.Http.StreamContent(fileStream), "file", "latest.csv");
 
             // URL of FastAPI service
-            var fastApiUrl = "http://localhost:8000/train-model";
+            var fastApiUrl = "http://fastapi-ml:8000/train-model";
             var response = await httpClient.PostAsync(fastApiUrl, multipartContent);
             var responseContent = await response.Content.ReadAsStringAsync();
 

@@ -31,15 +31,14 @@ interface DateConstraints {
 }
 
 @Component({
-    selector: 'app-date-ranges',
-    templateUrl: './date-ranges.component.html',
-    styleUrls: ['./date-ranges.component.scss'],
-    standalone: false
+  selector: 'app-date-ranges',
+  templateUrl: './date-ranges.component.html',
+  styleUrls: ['./date-ranges.component.scss'],
+  standalone: false
 })
 export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('barChart') barChartRef!: ElementRef<HTMLCanvasElement>;
 
-  // Date inputs
   trainStart = '';
   trainEnd = '';
   testStart = '';
@@ -47,17 +46,14 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
   simStart = '';
   simEnd = '';
 
-  // Date constraints from backend
   minDate = '';
   maxDate = '';
 
-  // Validation state
   validationSuccess = false;
   validationErrors: string[] = [];
   recordCounts: RecordCounts | null = null;
   chartData: ChartData[] = [];
 
-  // Chart instance
   chart: Chart | null = null;
 
   constructor(
@@ -66,46 +62,31 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadDateConstraints();
+    console.log('[Init] DateRangesComponent initialized');
+    if (typeof window !== 'undefined') {
+      this.loadDateConstraints();
+    }
   }
 
   ngAfterViewInit(): void {
-    // Chart will be initialized after validation
+    // Placeholder for post-view logic
   }
 
-  // Load min/max date constraints from backend
   loadDateConstraints(): void {
-    this.dateService.getDateConstraints().subscribe({
-      next: (constraints: DateConstraints) => {
-        // Convert datetime to date format for input fields
-        this.minDate = this.formatDateForInput(constraints.minDate);
-        this.maxDate = this.formatDateForInput(constraints.maxDate);
-
-        console.log('Date constraints loaded:', {
-          min: this.minDate,
-          max: this.maxDate
-        });
-      },
-      error: (error) => {
-        console.error('Failed to load date constraints:', error);
-        // Set default constraints if backend fails
-        this.minDate = '2021-01-01';
-        this.maxDate = '2021-12-31';
-      }
-    });
+    this.minDate = '';
+    this.maxDate = '';
+    console.log('[loadDateConstraints] Date constraints disabled');
   }
 
-  // Convert datetime string to date format for HTML input
   private formatDateForInput(dateTimeString: string): string {
     try {
       const date = new Date(dateTimeString);
       return date.toISOString().split('T')[0];
     } catch {
-      return dateTimeString.split(' ')[0]; // fallback for YYYY-MM-DD HH:mm:ss format
+      return dateTimeString.split(' ')[0];
     }
   }
 
-  // Check if validation can be performed
   canValidate(): boolean {
     return !!(
       this.trainStart && this.trainEnd &&
@@ -114,46 +95,40 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  // Calculate days between two dates
   private calculateDays(startDate: string, endDate: string): number {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   }
 
-  // Format date range for display
   formatDateRange(startDate: string, endDate: string): string {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
     const startFormatted = start.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+      day: '2-digit', month: '2-digit', year: 'numeric'
     });
     const endFormatted = end.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+      day: '2-digit', month: '2-digit', year: 'numeric'
     });
 
     return `${startFormatted} to ${endFormatted}`;
   }
 
-  // Validate date ranges
   validateRanges(): void {
+    console.log('[validateRanges] Validation triggered');
+
     if (!this.canValidate()) {
+      console.warn('[validateRanges] Validation skipped - missing inputs');
       return;
     }
 
-    // Reset previous validation state
     this.validationSuccess = false;
     this.validationErrors = [];
     this.recordCounts = null;
     this.chartData = [];
 
-    // Prepare payload for backend
     const payload = {
       trainStart: this.trainStart,
       trainEnd: this.trainEnd,
@@ -163,14 +138,17 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
       simEnd: this.simEnd
     };
 
-    // Send to backend for validation and chart data
+    console.log('[validateRanges] Sending payload to backend:', payload);
+
     this.dateService.validateDateRanges(payload).subscribe({
       next: (response) => {
+        console.log('[validateRanges] Received response:', response);
+
         if (response.status === 'valid') {
+          console.log('[validateRanges] Validation succeeded');
           this.validationSuccess = true;
           this.validationErrors = [];
 
-          // Calculate days
           this.recordCounts = {
             trainDays: this.calculateDays(this.trainStart, this.trainEnd),
             trainStart: this.trainStart,
@@ -183,14 +161,14 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
             simEnd: this.simEnd
           };
 
-          // Set chart data from backend response
           this.chartData = response.chartData || [];
 
-          // Create chart after a short delay to ensure DOM is ready
+          console.log('[validateRanges] Chart data set. Creating chart...');
           setTimeout(() => {
             this.createChart();
           }, 100);
         } else {
+          console.warn('[validateRanges] Validation failed with errors:', response.errors || [response.message]);
           this.validationSuccess = false;
           this.validationErrors = response.errors || [response.message];
           this.recordCounts = null;
@@ -198,7 +176,7 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Validation failed:', error);
+        console.error('[validateRanges] API call failed:', error);
         this.validationSuccess = false;
         this.validationErrors = ['Failed to validate date ranges. Please try again.'];
         this.recordCounts = null;
@@ -207,21 +185,25 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Create bar chart
   private createChart(): void {
+    console.log('[createChart] Chart rendering started');
+
     if (!this.barChartRef || this.chartData.length === 0) {
+      console.warn('[createChart] Missing chart reference or data. Chart not created.');
       return;
     }
 
-    // Destroy existing chart
     if (this.chart) {
+      console.log('[createChart] Destroying existing chart instance');
       this.chart.destroy();
     }
 
     const ctx = this.barChartRef.nativeElement.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.error('[createChart] Chart context not available');
+      return;
+    }
 
-    // Prepare chart data
     const labels = this.chartData.map(item => item.month);
 
     this.chart = new Chart(ctx, {
@@ -256,93 +238,84 @@ export class DateRangesComponent implements OnInit, AfterViewInit, OnDestroy {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false // Hide legend as shown in the image
-          },
-          title: {
-            display: false
-          }
+          legend: { display: false },
+          title: { display: false }
         },
         scales: {
           x: {
             title: {
               display: true,
               text: 'Timeline (Year)',
-              font: {
-                size: 12
-              }
+              font: { size: 12 }
             },
-            grid: {
-              display: false
-            }
+            grid: { display: false }
           },
           y: {
             title: {
               display: true,
               text: 'Volume',
-              font: {
-                size: 12
-              }
+              font: { size: 12 }
             },
             beginAtZero: true,
-            grid: {
-              color: '#e5e7eb'
-            }
+            grid: { color: '#e5e7eb' }
           }
         },
         elements: {
-          bar: {
-            borderRadius: 2
-          }
+          bar: { borderRadius: 2 }
         }
+      }
+    });
+
+    console.log('[createChart] Chart rendered successfully');
+  }
+
+  next(): void {
+    if (!this.validationSuccess) {
+      console.warn('[next] Navigation blocked - validation not complete');
+      return;
+    }
+
+    const dateRanges = {
+      TrainStart: this.trainStart,
+      TrainEnd: this.trainEnd,
+      TestStart: this.testStart,
+      TestEnd: this.testEnd,
+      SimulationStart: this.simStart,
+      SimulationEnd: this.simEnd
+    };
+
+    localStorage.setItem('dateRanges', JSON.stringify(dateRanges));
+    console.log('[next] Date ranges saved to local storage:', dateRanges);
+
+    const finalPayload = {
+      trainStart: this.trainStart,
+      trainEnd: this.trainEnd,
+      testStart: this.testStart,
+      testEnd: this.testEnd,
+      simStart: this.simStart,
+      simEnd: this.simEnd,
+      trainDays: this.recordCounts?.trainDays,
+      testDays: this.recordCounts?.testDays,
+      simDays: this.recordCounts?.simDays
+    };
+
+    console.log('[next] Submitting date ranges to backend:', finalPayload);
+
+    this.dateService.submitDateRanges(finalPayload).subscribe({
+      next: (response) => {
+        console.log('[next] Submission successful. Navigating to /train-model', response);
+        this.router.navigate(['/train-model']);
+      },
+      error: (error) => {
+        console.error('[next] Submission failed. Navigating to fallback /model-training', error);
+        this.router.navigate(['/model-training']);
       }
     });
   }
 
-  // Navigate to next step
-  next(): void {
-    if (this.validationSuccess) {
-      // Save to local storage
-      const dateRanges = {
-        TrainStart: this.trainStart,
-        TrainEnd: this.trainEnd,
-        TestStart: this.testStart,
-        TestEnd: this.testEnd,
-        SimulationStart: this.simStart,
-        SimulationEnd: this.simEnd
-      };
-      localStorage.setItem('dateRanges', JSON.stringify(dateRanges));
-      console.log('Date ranges saved to local storage:', dateRanges);
-
-      // Send final selected date ranges to backend before navigation
-      const finalPayload = {
-        trainStart: this.trainStart,
-        trainEnd: this.trainEnd,
-        testStart: this.testStart,
-        testEnd: this.testEnd,
-        simStart: this.simStart,
-        simEnd: this.simEnd,
-        trainDays: this.recordCounts?.trainDays,
-        testDays: this.recordCounts?.testDays,
-        simDays: this.recordCounts?.simDays
-      };
-
-      this.dateService.submitDateRanges(finalPayload).subscribe({
-        next: (response) => {
-          console.log('Date ranges submitted successfully:', response);
-          this.router.navigate(['/train-model']);
-        },
-        error: (error) => {
-          console.error('Failed to submit date ranges:', error);
-          // Navigate anyway for now
-          this.router.navigate(['/model-training']);
-        }
-      });
-    }
-  }
-
   ngOnDestroy(): void {
     if (this.chart) {
+      console.log('[ngOnDestroy] Destroying chart instance');
       this.chart.destroy();
     }
   }

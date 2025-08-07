@@ -1,0 +1,12 @@
+services:
+  backend:
+    image: siddharth925/intelliinspect-backend:latest
+    ports:
+      - "5229:8080" # Host:5229 -> Container:8080
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+
+  ml-fastapi:
+    image: siddharth925/ml-service-fastapi:latest
+    ports:
+      - "8000:8000" # Host:8000 -> Container:8000

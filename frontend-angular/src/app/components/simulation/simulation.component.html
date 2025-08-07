@@ -1,5 +1,6 @@
 <div class="render-container">
   <app-progress-navbar [currentStep]="3"></app-progress-navbar>
+
   <div class="simulation-actions">
     <button mat-raised-button color="primary" *ngIf="!isRunning && !isCompleted" (click)="startSimulation()">
       Start Simulation
@@ -12,6 +13,8 @@
   <p *ngIf="isCompleted" class="success-msg">✔ Simulation completed</p>
 
   <div class="charts-container" *ngIf="isBrowser">
+    
+    <!-- Line Chart -->
     <div class="chart">
       <h4>Quality Score Over Time</h4>
       <canvas baseChart
@@ -21,16 +24,27 @@
       </canvas>
     </div>
 
-    <div class="chart">
-      <h4>Prediction Confidence Distribution</h4>
+    <!-- Average Confidence Donut Chart -->
+    <div class="chart" style="position: relative;">
+      <h4>Average Prediction Confidence</h4>
       <canvas baseChart
         [data]="donutChartData"
         [options]="donutChartOptions"
-        [type]="'pie'">
+        [type]="'doughnut'">
       </canvas>
+      <!-- Center Text -->
+      <div style="
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        font-weight: bold;
+      ">
+        {{ avgConfidence | number: '1.0-2' }}%
+      </div>
     </div>
   </div>
-
 
   <div class="stats-panel">
     <mat-card>Total Predictions: {{ total }}</mat-card>

@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
-using CsvHelper;
-using System.Text;
+using System.IO;
+using System.Linq;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -19,74 +22,111 @@ public class DateRangeController : ControllerBase
     [HttpGet("constraints")]
     public IActionResult GetDateConstraints()
     {
+        _logger.LogInformation("[GET] /api/DateRange/constraints requested");
+
         var metadata = _datasetService.GetMetadata();
+
         if (metadata == null)
-            return BadRequest("No dataset uploaded.");
-        
-        return Ok(new { 
-            minDate = metadata.startTimestamp, 
-            maxDate = metadata.endTimestamp 
-        });
+        {
+            _logger.LogWarning("[GET] No metadata found. Returning default constraints.");
+            return Ok(new
+            {
+                minDate = "2020-12-31",
+                maxDate = "2020-12-31"
+            });
+        }
+
+        try
+        {
+            _logger.LogInformation($"[GET] Metadata startTimestamp = {metadata.startTimestamp}, endTimestamp = {metadata.endTimestamp}");
+
+            var minDate = DateTime.Parse(metadata.startTimestamp).ToString("yyyy-MM-dd HH:mm:ss");
+            var maxDate = DateTime.Parse(metadata.endTimestamp).ToString("yyyy-MM-dd HH:mm:ss");
+
+            _logger.LogInformation($"[GET] Parsed constraints: minDate = {minDate}, maxDate = {maxDate}");
+
+            return Ok(new
+            {
+                minDate,
+                maxDate
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"[GET] Failed to parse metadata: {ex.Message}");
+            return StatusCode(500, $"Error parsing metadata: {ex.Message}");
+        }
     }
 
     [HttpPost("validate")]
-    public IActionResult ValidateDateRanges([FromBody] DateRangeRequest request)
+public IActionResult ValidateDateRanges([FromBody] DateRangeRequest request)
+{
+    _logger.LogInformation("[POST] /api/DateRange/validate called");
+
+    var metadata = _datasetService.GetMetadata();
+    if (metadata == null)
     {
-        var metadata = _datasetService.GetMetadata();
-        if (metadata == null)
-            return BadRequest("No dataset uploaded.");
+        _logger.LogWarning("[POST] Validation failed: No dataset uploaded.");
+        return BadRequest("No dataset uploaded.");
+    }
 
-        var minDate = DateTime.Parse(metadata.startTimestamp);
-        var maxDate = DateTime.Parse(metadata.endTimestamp);
+    _logger.LogInformation($"[POST] Metadata range: {metadata.startTimestamp} to {metadata.endTimestamp}");
 
-        var ranges = new[]
+    var minDate = DateTime.Parse(metadata.startTimestamp);
+    var maxDate = DateTime.Parse(metadata.endTimestamp);
+
+    var ranges = new[]
+    {
+        new { Name = "Train", Start = DateTime.Parse(request.TrainStart), End = DateTime.Parse(request.TrainEnd) },
+        new { Name = "Test", Start = DateTime.Parse(request.TestStart), End = DateTime.Parse(request.TestEnd) },
+        new { Name = "Sim", Start = DateTime.Parse(request.SimStart), End = DateTime.Parse(request.SimEnd) }
+    };
+
+    var errors = new List<string>();
+
+    foreach (var range in ranges)
+    {
+        _logger.LogInformation($"[POST] Validating range {range.Name}: {range.Start} to {range.End}");
+
+        if (range.Start < minDate || range.End > maxDate)
+            errors.Add($"{range.Name} range is outside dataset boundaries.");
+
+        if (range.Start > range.End)
+            errors.Add($"{range.Name} start date must be before end date.");
+    }
+
+    // Overlap check removed intentionally
+
+    if (errors.Any())
+    {
+        _logger.LogWarning("[POST] Validation failed with errors: " + string.Join("; ", errors));
+        return Ok(new
         {
-            new { Name = "Train", Start = DateTime.Parse(request.TrainStart), End = DateTime.Parse(request.TrainEnd) },
-            new { Name = "Test", Start = DateTime.Parse(request.TestStart), End = DateTime.Parse(request.TestEnd) },
-            new { Name = "Sim", Start = DateTime.Parse(request.SimStart), End = DateTime.Parse(request.SimEnd) }
-        };
-
-        // Validate ranges
-        var errors = new List<string>();
-        
-        foreach (var range in ranges)
-        {
-            if (range.Start < minDate || range.End > maxDate)
-                errors.Add($"{range.Name} range is outside dataset boundaries.");
-            if (range.Start > range.End)
-                errors.Add($"{range.Name} start date must be before end date.");
-        }
-
-        // Check for overlaps
-        for (int i = 0; i < ranges.Length; i++)
-        {
-            for (int j = i + 1; j < ranges.Length; j++)
-            {
-                if (ranges[i].End >= ranges[j].Start && ranges[j].End >= ranges[i].Start)
-                    errors.Add($"{ranges[i].Name} and {ranges[j].Name} ranges cannot overlap.");
-            }
-        }
-
-        if (errors.Any())
-            return Ok(new { 
-                status = "invalid", 
-                message = "Date ranges are invalid.", 
-                errors = errors.ToArray() 
-            });
-
-        // Calculate monthly counts
-        var chartData = _datasetService.GetMonthlyCounts(ranges.Select(r => new { r.Start, r.End }).ToArray());
-        
-        return Ok(new { 
-            status = "valid", 
-            message = "Date ranges validated successfully.", 
-            chartData = chartData 
+            status = "invalid",
+            message = "Date ranges are invalid.",
+            errors = errors.ToArray()
         });
     }
+
+    _logger.LogInformation("[POST] Validation successful. Computing chart data...");
+
+    var chartData = _datasetService.GetMonthlyCounts(ranges.Select(r => new { r.Start, r.End }).ToArray());
+
+    _logger.LogInformation($"[POST] Validation and chart computation complete. Records returned: {chartData.Count}");
+
+    return Ok(new
+    {
+        status = "valid",
+        message = "Date ranges validated successfully.",
+        chartData = chartData
+    });
+}
+
 
     [HttpPost("submit")]
     public IActionResult SubmitDateRanges([FromBody] DateRangeRequest request)
     {
+        _logger.LogInformation("[POST] /api/DateRange/submit called");
         _datasetService.SaveDateRanges(request);
         return Ok(new { message = "Date ranges submitted successfully." });
     }
@@ -118,30 +158,38 @@ public class DatasetService
 
     public dynamic GetMetadata()
     {
+        _logger.LogInformation("[DatasetService] Reading metadata from latest.csv");
+
         if (!File.Exists(_csvFilePath))
+        {
+            _logger.LogWarning("[DatasetService] latest.csv not found");
             return null;
+        }
 
         try
         {
             using var reader = new StreamReader(_csvFilePath);
-            
-            // Read header line
             var headerLine = reader.ReadLine();
             if (string.IsNullOrEmpty(headerLine))
+            {
+                _logger.LogWarning("[DatasetService] Header line is empty");
                 return null;
+            }
 
             var headers = headerLine.Split(',').Select(h => h.Trim()).ToArray();
             var timestampIndex = Array.IndexOf(headers, "Timestamp");
-            
+
             if (timestampIndex == -1)
+            {
+                _logger.LogWarning("[DatasetService] Timestamp column not found");
                 return null;
+            }
 
             string firstTimestamp = null;
             string lastTimestamp = null;
             int recordCount = 0;
-
-            // Read data lines
             string line;
+
             while ((line = reader.ReadLine()) != null)
             {
                 if (string.IsNullOrWhiteSpace(line))
@@ -159,49 +207,62 @@ public class DatasetService
             }
 
             if (firstTimestamp == null || lastTimestamp == null)
+            {
+                _logger.LogWarning("[DatasetService] No valid timestamps found in file");
                 return null;
+            }
 
-            return new { 
-                startTimestamp = firstTimestamp, 
+            _logger.LogInformation($"[DatasetService] Metadata loaded: {recordCount} records, start = {firstTimestamp}, end = {lastTimestamp}");
+
+            return new
+            {
+                startTimestamp = firstTimestamp,
                 endTimestamp = lastTimestamp,
-                totalRecords = recordCount 
+                totalRecords = recordCount
             };
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error reading CSV metadata: {ex.Message}");
+            _logger.LogError($"[DatasetService] Error reading metadata: {ex.Message}");
             return null;
         }
     }
 
     public List<dynamic> GetMonthlyCounts(dynamic[] ranges)
     {
+        _logger.LogInformation("[DatasetService] Calculating monthly counts");
+
         if (!File.Exists(_csvFilePath))
+        {
+            _logger.LogWarning("[DatasetService] latest.csv not found");
             return new List<dynamic>();
+        }
 
         try
         {
             using var reader = new StreamReader(_csvFilePath);
-            
-            // Read header line
             var headerLine = reader.ReadLine();
             if (string.IsNullOrEmpty(headerLine))
+            {
+                _logger.LogWarning("[DatasetService] CSV header is empty");
                 return new List<dynamic>();
+            }
 
             var headers = headerLine.Split(',').Select(h => h.Trim()).ToArray();
             var timestampIndex = Array.IndexOf(headers, "Timestamp");
-            
+
             if (timestampIndex == -1)
+            {
+                _logger.LogWarning("[DatasetService] Timestamp column not found");
                 return new List<dynamic>();
+            }
 
             var records = new List<DateTime>();
-            
-            // Read data lines and extract timestamps
             string line;
+
             while ((line = reader.ReadLine()) != null)
             {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
+                if (string.IsNullOrWhiteSpace(line)) continue;
 
                 var values = line.Split(',').Select(v => v.Trim()).ToArray();
                 if (values.Length > timestampIndex)
@@ -215,33 +276,25 @@ public class DatasetService
 
             var chartData = new List<dynamic>();
 
-            // Group by month and year
             var monthlyGroups = records
-                .GroupBy(timestamp => new { Year = timestamp.Year, Month = timestamp.Month })
-                .OrderBy(g => g.Key.Year)
-                .ThenBy(g => g.Key.Month);
+                .GroupBy(t => new { t.Year, t.Month })
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month);
 
-            foreach (var monthGroup in monthlyGroups)
+            foreach (var group in monthlyGroups)
             {
-                var monthName = new DateTime(monthGroup.Key.Year, monthGroup.Key.Month, 1).ToString("MMM");
-                var trainVolume = 0;
-                var testVolume = 0;
-                var simVolume = 0;
+                var monthName = new DateTime(group.Key.Year, group.Key.Month, 1).ToString("MMM");
+                int train = 0, test = 0, sim = 0;
 
-                foreach (var timestamp in monthGroup)
+                foreach (var timestamp in group)
                 {
-                    // Check which range this record falls into
                     for (int i = 0; i < ranges.Length; i++)
                     {
-                        var range = ranges[i];
-                        if (timestamp >= range.Start && timestamp <= range.End)
+                        var r = ranges[i];
+                        if (timestamp >= r.Start && timestamp <= r.End)
                         {
-                            switch (i)
-                            {
-                                case 0: trainVolume++; break;
-                                case 1: testVolume++; break;
-                                case 2: simVolume++; break;
-                            }
+                            if (i == 0) train++;
+                            else if (i == 1) test++;
+                            else if (i == 2) sim++;
                             break;
                         }
                     }
@@ -250,25 +303,26 @@ public class DatasetService
                 chartData.Add(new
                 {
                     month = monthName,
-                    year = monthGroup.Key.Year,
-                    trainVolume = trainVolume,
-                    testVolume = testVolume,
-                    simVolume = simVolume
+                    year = group.Key.Year,
+                    trainVolume = train,
+                    testVolume = test,
+                    simVolume = sim
                 });
             }
+
+            _logger.LogInformation($"[DatasetService] Monthly counts calculated: {chartData.Count} groups");
 
             return chartData;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error calculating monthly counts: {ex.Message}");
+            _logger.LogError($"[DatasetService] Error calculating monthly counts: {ex.Message}");
             return new List<dynamic>();
         }
     }
 
     public void SaveDateRanges(DateRangeRequest request)
     {
-        // Store the date ranges (you can implement persistence as needed)
-        _logger.LogInformation($"Saving date ranges: Train({request.TrainStart} to {request.TrainEnd}), Test({request.TestStart} to {request.TestEnd}), Sim({request.SimStart} to {request.SimEnd})");
+        _logger.LogInformation($"[DatasetService] Saving date ranges: Train({request.TrainStart} to {request.TrainEnd}), Test({request.TestStart} to {request.TestEnd}), Sim({request.SimStart} to {request.SimEnd})");
     }
 }

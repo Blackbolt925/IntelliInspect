@@ -73,26 +73,26 @@ export class TrainModelComponent {
     this.statusMsg = 'Training in progress...';
     this.isError = false;
 
-    // const dateRangesString = localStorage.getItem('dateRanges');
-    // const dateRanges = dateRangesString ? JSON.parse(dateRangesString) : {};
-
-    // const payload = {
-    //   trainStart: dateRanges.TrainStart,
-    //   trainEnd: dateRanges.TrainEnd,
-    //   testStart: dateRanges.TestStart,
-    //   testEnd: dateRanges.TestEnd,
-    //   simulationStart: dateRanges.SimulationStart,
-    //   simulationEnd: dateRanges.SimulationEnd
-    // };
+    const dateRangesString = localStorage.getItem('dateRanges');
+    const dateRanges = dateRangesString ? JSON.parse(dateRangesString) : {};
 
     const payload = {
-      trainStart: '2023-01-01',
-      trainEnd: '2023-01-02',
-      testStart: '2023-01-03',
-      testEnd: '2023-01-04',
-      simulationStart: '2023-01-05',
-      simulationEnd: '2023-01-06'
+      trainStart: dateRanges.TrainStart,
+      trainEnd: dateRanges.TrainEnd,
+      testStart: dateRanges.TestStart,
+      testEnd: dateRanges.TestEnd,
+      simulationStart: dateRanges.SimulationStart,
+      simulationEnd: dateRanges.SimulationEnd
     };
+
+    // const payload = {
+    //   trainStart: '2023-01-01',
+    //   trainEnd: '2023-01-02',
+    //   testStart: '2023-01-03',
+    //   testEnd: '2023-01-04',
+    //   simulationStart: '2023-01-05',
+    //   simulationEnd: '2023-01-06'
+    // };
 
     this.trainService.trainModel(payload).subscribe({
       next: (res) => {

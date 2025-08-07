@@ -20,12 +20,13 @@ export class SimulationComponent {
   failCount = 0;
   avgConfidence = 0;
 
+  // Line chart for confidence over time
   lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
     datasets: [
       {
         data: [],
-        label: 'Quality Score',
+        label: 'Confidence Score',
         borderColor: '#3b82f6',
         tension: 0.3,
         fill: false,
@@ -48,33 +49,38 @@ export class SimulationComponent {
     }
   };
 
-  donutChartData: ChartConfiguration<'pie'>['data'] = {
-    labels: ['Pass', 'Fail'],
+  // Donut chart for average confidence
+  donutChartData: ChartConfiguration<'doughnut'>['data'] = {
+    labels: ['Avg Confidence', 'Remaining'],
     datasets: [
       {
-        data: [0, 0],
-        backgroundColor: ['#10b981', '#ef4444']
+        data: [0, 100],
+        backgroundColor: ['#10b981', '#e5e7eb']
       }
     ]
   };
 
-  donutChartOptions: ChartConfiguration<'pie'>['options'] = {
+  donutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     cutout: '60%',
     layout: {
       padding: 60 // adds padding around the chart so it appears smaller
     },
-    plugins: { legend: { position: 'bottom' } }
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false }
+    }
   };
 
   constructor(
     private simService: SimulationService,
-    private zone: NgZone // ✅ Inject NgZone
+    private zone: NgZone
   ) {}
 
   startSimulation(): void {
     console.log("[UI] Starting simulation...");
 
+    // Reset state
     this.isRunning = true;
     this.isCompleted = false;
     this.records = [];
@@ -83,13 +89,13 @@ export class SimulationComponent {
     this.failCount = 0;
     this.avgConfidence = 0;
 
+    // Reset charts
     this.lineChartData.labels = [];
     this.lineChartData.datasets[0].data = [];
-    this.donutChartData.datasets[0].data = [0, 0];
+    this.donutChartData.datasets[0].data = [0, 100];
 
     this.simService.startSimulation().subscribe({
       next: (res: any) => {
-        // ✅ Wrap UI updates inside NgZone
         this.zone.run(() => {
           console.log("[UI] Row received (NgZone):", res);
 
@@ -97,17 +103,23 @@ export class SimulationComponent {
           this.records.push(res);
           this.total++;
 
+          // Pass/Fail counting
           if (res.prediction === 'Pass') this.passCount++;
           else this.failCount++;
 
+          // Update average confidence
           this.avgConfidence =
             (this.avgConfidence * (this.total - 1) + confidence) / this.total;
 
+          // Update line chart
           this.lineChartData.labels!.push(res.time);
           this.lineChartData.datasets[0].data.push(confidence);
-          this.donutChartData.datasets[0].data = [this.passCount, this.failCount];
 
-          // ✅ Force change detection
+          // Update donut chart
+          const avgPercent = Math.round(this.avgConfidence);
+          this.donutChartData.datasets[0].data = [avgPercent, 100 - avgPercent];
+
+          // Force chart updates
           this.lineChartData = { ...this.lineChartData };
           this.donutChartData = { ...this.donutChartData };
 
