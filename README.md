@@ -9,13 +9,13 @@ Project work done for the ABB Hackathon.
 - Kaustub Pavagada (CS22B1042)
 
 ## Table of Contents
-- [Setup Guide](#sdn-emulation-and-development-of-dataset-for-ml-based-intrusion-detection)
+- [Setup Guide](#setup-page)
 - [Usage Guide](#usage-guide)
 
 ## Objective
 Design and implement a full-stack AI-powered application that enables real-time quality control prediction using Kaggle Production Line sensor data. 
   
-![image]()
+
 
 ## Software Stack Used
 - Frontend (UI) - **AngularJS**: for the entire user interface and statistics display
@@ -23,6 +23,60 @@ Design and implement a full-stack AI-powered application that enables real-time 
 - Microservice - **FastAPI**: contains the model training code, stores the trained model and returns predictions one-by-one during streaming
 
 ## Setup Guide
+
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+
+### Quick Start
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/Blackbolt925/IntelliInspect
+cd IntelliInspect
+```
+
+#### 2. Run the Application
+From the root directory, start all services using Docker Compose:
+```bash
+docker compose up -d
+```
+
+This command will:
+- Pull and run the pre-built Angular frontend image `lsrinivas9/intelliinspect-frontend` on port 8080
+- Pull and run the pre-built .NET Core backend image `lsrinivas9/intelliinspect-backend` on port 5229
+- Pull and run the pre-built FastAPI ML service image `lsrinivas9/intelliinspect-ml` on port 8000
+
+#### 3. Access the Application
+Once all services are running, open your browser and navigate to:
+```
+http://localhost:8080
+```
+
+
+
+### Port Mapping
+
+| Service   | Container Name | Container Port | Host Port | URL                   | Description            |
+|-----------|----------------|----------------|-----------|------------------------|-------------------------|
+| Frontend  | angular-ui     | 80             | 8080      | http://localhost:8080 | Angular UI Frontend     |
+| Backend   | dotnet-backend | 8080           | 5229      | http://localhost:5229 | .NET Core API Backend   |
+| ML API    | fastapi-ml     | 8000           | 8000      | http://localhost:8000 | FastAPI ML Model Server |
+
+### Stopping the Application
+To stop all services:
+```bash
+docker compose down
+```
+
+### Notes
+- All services use pre-built Docker images hosted on Docker Hub for fast and consistent deployment.
+- The backend supports large file uploads (up to 14 GB).
+- CORS is configured to allow cross-origin requests from Angular to backend.
+- The FastAPI ML microservice is called from the backend for both training and prediction.
+- The frontend is served using NGINX inside a container.
+- Make sure ports 8080, 5229, and 8000 are available on your system.
+
 
 ## Usage Guide
 The usage guide will be page-by-page, ensuring the user can follow along easily
